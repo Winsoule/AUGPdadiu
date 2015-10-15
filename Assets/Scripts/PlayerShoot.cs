@@ -7,6 +7,7 @@ using InControl;
 public class PlayerShoot : MonoBehaviour {
 
     public List<Transform> nozzles = new List<Transform>();
+    public List<Transform> guns = new List<Transform>();
     Bullets bullets;
     Bullets.BulletType currentBulletType = Bullets.BulletType.normal;
 
@@ -32,7 +33,7 @@ public class PlayerShoot : MonoBehaviour {
         {
             canShoot = true;
         }
-        if (controller.RightTrigger > 0.2f && canShoot)
+        if (controller.RightTrigger > 0.2f && canShoot && controller.RightStick.Vector.magnitude > 0.2f)
         {
             Shoot();
         }
@@ -45,6 +46,23 @@ public class PlayerShoot : MonoBehaviour {
         GameObject bullet = Instantiate(bullets.bulletParent, nozzles[currentGun].position, nozzles[currentGun].rotation) as GameObject;
         BulletBehaviour bulletScript = bullet.GetComponent<BulletBehaviour>();
         bulletScript.SetBulletType(currentBulletType);
+        StartCoroutine(Recoil(currentGun));
         currentGun = (currentGun + 1) % nozzles.Count;
+        
+    }
+
+    IEnumerator Recoil(int gunID)
+    {
+        float cooldown = guns.Count * gunCooldown * 0.9f;
+        float cooldownCounter = cooldown;
+
+        while(cooldownCounter > 0)
+        {
+            cooldownCounter -= Time.deltaTime;
+            Vector3 gunRot = guns[gunID].localEulerAngles;
+            gunRot.x = -45 * (cooldownCounter / cooldown);
+            guns[gunID].localEulerAngles = gunRot;
+            yield return new WaitForEndOfFrame();
+        }
     }
 }
