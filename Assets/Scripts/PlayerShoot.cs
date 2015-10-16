@@ -17,6 +17,19 @@ public class PlayerShoot : MonoBehaviour {
     bool canShoot;
     InputDevice controller;
 
+    public bool CanShoot
+    {
+        get { return canShoot; }
+        set
+        {
+            if(!value)
+            {
+                gunCooldownCounter = gunCooldown;
+            }
+            canShoot = value;
+        }
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -41,8 +54,7 @@ public class PlayerShoot : MonoBehaviour {
 
     public void Shoot()
     {
-        canShoot = false;
-        gunCooldownCounter = gunCooldown;
+        CanShoot = false;
         GameObject bullet = Instantiate(bullets.bulletParent, nozzles[currentGun].position, nozzles[currentGun].rotation) as GameObject;
         BulletBehaviour bulletScript = bullet.GetComponent<BulletBehaviour>();
         bulletScript.SetBulletType(currentBulletType);

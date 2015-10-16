@@ -21,6 +21,6 @@ public class PlayerLook : MonoBehaviour {
         controller = InputManager.ActiveDevice;
         Vector3 aimDir = Vector3.ProjectOnPlane(playerCamera.transform.TransformDirection(new Vector3(controller.RightStickX, 0, controller.RightStickY)), Vector3.up);
         Vector3 walkDir = Vector3.ProjectOnPlane(playerCamera.transform.TransformDirection(new Vector3(controller.LeftStickX, 0, controller.LeftStickY)), Vector3.up);
-        playerCamera.transform.position = Vector3.Lerp(playerCamera.transform.position, transform.position + orgCamOffset + aimDir * 3, Time.fixedDeltaTime);
+        playerCamera.transform.position = Vector3.Lerp(playerCamera.transform.position, transform.position + orgCamOffset + aimDir * 3, Time.fixedDeltaTime * 4);
     }
 }
