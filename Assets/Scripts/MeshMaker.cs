@@ -138,6 +138,7 @@ public class MeshMaker : MonoBehaviour {
         mesh.Optimize();
         go.AddComponent<NavMeshObstacle>();
         go.GetComponent<NavMeshObstacle>().carving = true;
+        go.AddComponent<BoxCollider>();
         return go;
     }
 }

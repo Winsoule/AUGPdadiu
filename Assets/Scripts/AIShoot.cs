@@ -15,7 +15,7 @@ public class AIShoot : MonoBehaviour {
 
     AIBehavior behavior;
     Bullets bullets;
-    Transform target;
+    public Transform target;
     State state = State.off;
     bool shootSomething = false;
     float deployWeight = 0;

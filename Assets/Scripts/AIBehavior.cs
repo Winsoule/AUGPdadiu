@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using System.Collections.Generic;
 
 [RequireComponent (typeof(NavMeshAgent))]
 [RequireComponent(typeof(AIShoot))]
@@ -14,7 +14,7 @@ public class AIBehavior : MonoBehaviour {
         shooting
     };
 
-    [HideInInspector]
+    
     public GameObject player;
     public float lookDistance = 2;
     public float hearDistance = 1;
@@ -25,6 +25,8 @@ public class AIBehavior : MonoBehaviour {
     public float mapSize = 10;
     public float stoppingDistance = 6f;
     public LayerMask FindPlayerMask;
+
+    public List<Vector3> patrolPos;
 
     private State _state = State.patrol;
     private float _waitedTime = Mathf.Epsilon;
@@ -91,7 +93,7 @@ public class AIBehavior : MonoBehaviour {
             case State.patrol:
                 if(_destination == Vector3.zero)
                 {
-                    _destination = new Vector3(Random.Range(-mapSize, mapSize), 0.0f, Random.Range(-mapSize, mapSize));
+                    _destination = patrolPos[Random.Range(0,patrolPos.Count)];
                     _meshAgent.SetDestination(_destination);
                 }
                 else if (Vector3.Distance(_destination, transform.position) <= hitDestination)

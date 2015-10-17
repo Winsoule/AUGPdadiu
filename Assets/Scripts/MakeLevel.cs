@@ -6,11 +6,16 @@ using System.Collections.Generic;
 public class MakeLevel : MonoBehaviour {
 
     MeshMaker meshMaker;
-    public GameObject wall, box;
+    public GameObject enemy;
     public Transform levelFloor;
     public Vector3 wallSize;
     public Vector3 lowWallSize;
-    public int numRooms = 10;
+    public int numRoomsProcent = 10;
+    public int levelSideSize = 100;
+    public int amountOfEnemys = 10;
+
+    public List<Vector3> aiPoints = new List<Vector3>();
+
     Vector3 levelSize;
     enum Dir
     {
@@ -41,64 +46,13 @@ public class MakeLevel : MonoBehaviour {
         levelSize = levelFloor.GetComponent<Renderer>().bounds.size;
         meshMaker = transform.GetComponent<MeshMaker>();
 
-        //MakePlane(levelSize, 11);
-        //MakeWalls(levelSize, wallSize, 100, 100);
-        //MakeWalls(levelSize, lowWallSize, 10, 100);
         //OldGenerateLevel(150, 1000);
-        GenerateLevel(1, 150, 1500, levelSize);
 
+        Debug.Log((int)(levelSideSize * levelSideSize * (numRoomsProcent / 100f)));
+        
+        GenerateLevel(((int)(levelSideSize * levelSideSize * (numRoomsProcent / 100f))), ((int)(levelSideSize * levelSideSize * (numRoomsProcent / 100f) * 10)), levelSize);
+        MakeEnemys(amountOfEnemys, enemy);
 
-    }
-
-    // Update is called once per frame
-    void Update () {
-	
-	}
-
-    void MakeWalls(Vector3 levelSize, Vector3 wallDimentions, int amount, int tries)
-    {
-        for(int i = 0; i<amount;i++)
-        {
-            GameObject go = meshMaker.Box();
-            go.transform.position = new Vector3(Random.Range(-(levelSize.x / 2), levelSize.x/2), wallDimentions.y / 2, Random.Range(-(levelSize.z / 2), levelSize.z/2));
-            go.transform.localRotation = Quaternion.Euler(new Vector3(0f, Random.Range(0f, 360f)));
-            go.transform.localScale = wallDimentions;
-            go.AddComponent<NavMeshObstacle>();
-            go.GetComponent<NavMeshObstacle>().carving = true;
-        }
-    }
-
-    void MakeRoom(Vector3 pos, Vector2 roomsize)
-    {
-        GameObject room = new GameObject("room");
-
-        GameObject wall = meshMaker.Box();
-        wall.transform.position = pos + new Vector3(roomsize.x / 2, 0f, 0f);
-        wall.transform.SetParent(room.transform);
-        wall.transform.localScale = new Vector3(1f, 1.5f, roomsize.x);
-        wall.AddComponent<NavMeshObstacle>();
-        wall.GetComponent<NavMeshObstacle>().carving = true;
-
-        wall = meshMaker.Box();
-        wall.transform.position = pos + new Vector3(-(roomsize.x / 2), 0f, 0f);
-        wall.transform.SetParent(room.transform);
-        wall.transform.localScale = new Vector3(1f, 1.5f, roomsize.x);
-        wall.AddComponent<NavMeshObstacle>();
-        wall.GetComponent<NavMeshObstacle>().carving = true;
-
-        wall = meshMaker.Box();
-        wall.transform.position = pos + new Vector3(0f, 0f, roomsize.y / 2);
-        wall.transform.SetParent(room.transform);
-        wall.transform.localScale = new Vector3(roomsize.y, 1.5f, 1f);
-        wall.AddComponent<NavMeshObstacle>();
-        wall.GetComponent<NavMeshObstacle>().carving = true;
-
-        wall = meshMaker.Box();
-        wall.transform.position = pos + new Vector3(0f, 0f, -(roomsize.y / 2));
-        wall.transform.SetParent(room.transform);
-        wall.transform.localScale = new Vector3(roomsize.y, 1.5f, 1f);
-        wall.AddComponent<NavMeshObstacle>();
-        wall.GetComponent<NavMeshObstacle>().carving = true;
     }
 
     void OldGenerateLevel(int maxRooms, int maxTries)
@@ -152,13 +106,15 @@ public class MakeLevel : MonoBehaviour {
         }
     }
 
-    void GenerateLevel(int roomSize, int maxRooms, int maxTries, Vector3 levelSize)
+    void GenerateLevel(int maxRooms, int maxTries, Vector3 levelSize)
     {
-        bool[,] tiles = new bool[100, 100];
+        GameObject level = new GameObject();
+        level.name = "Level";
+        bool[,] tiles = new bool[levelSideSize, levelSideSize];
         int rooms = 0;
         int tries = 0;
-        int currentXCoordinate = 50;
-        int currentYCoordinate = 50;
+        int currentXCoordinate = levelSideSize/2;
+        int currentYCoordinate = levelSideSize/2;
 
         
         while (maxRooms > rooms || maxTries > tries)
@@ -167,20 +123,20 @@ public class MakeLevel : MonoBehaviour {
             {
                 if (Random.value > 0.5f) //Up or down
                 {
-                    currentYCoordinate = Mathf.Clamp(currentYCoordinate + 1, 1, 98);
+                    currentYCoordinate = Mathf.Clamp(currentYCoordinate + 1, 1, levelSideSize -2);
                 }
                 else
                 {
-                    currentYCoordinate = Mathf.Clamp(currentYCoordinate - 1, 1, 98);
+                    currentYCoordinate = Mathf.Clamp(currentYCoordinate - 1, 1, levelSideSize -2);
                 }
             }
             else if (Random.value > 0.5f) //Left or right
             {
-                currentXCoordinate = Mathf.Clamp(currentXCoordinate + 1, 1, 98);
+                currentXCoordinate = Mathf.Clamp(currentXCoordinate + 1, 1, levelSideSize -2);
             }
             else
             {
-                currentXCoordinate = Mathf.Clamp(currentXCoordinate - 1, 1, 98);
+                currentXCoordinate = Mathf.Clamp(currentXCoordinate - 1, 1, levelSideSize -2);
             }
 
             if(!tiles[currentXCoordinate,currentYCoordinate])
@@ -189,38 +145,52 @@ public class MakeLevel : MonoBehaviour {
                 rooms++;
             }
             tries++;
+            if (maxRooms <= rooms)
+                break;
         }
-        /*
-        tiles[50, 50] = true;
-        tiles[51, 50] = true;
-        tiles[50, 51] = true;
-        tiles[51, 51] = true;
-        */
-        for (int i = 0; i < 100; i++)
+
+        Debug.Log("Found " + rooms + " rooms in " + tries + " tries.");
+        
+        for (int i = 0; i < levelSideSize; i++)
         {
-            for(int j = 0; j < 100; j++)
+            for(int j = 0; j < levelSideSize; j++)
             {
                 if (!tiles[i,j])
                 {
                     
-                    if (i != 0 && i != 99 && j != 0 && j != 99)
+                    if (i != 0 && i != levelSideSize-1 && j != 0 && j != levelSideSize-1)
                     {
                         if(tiles[i + 1, j] || tiles[i - 1, j] || tiles[i, j + 1] || tiles[i, j - 1])
                         {
                             GameObject go = meshMaker.Box();
-                            go.transform.position = new Vector3(-50f + i, 0.5f, -50f + j);
+                            go.transform.position = new Vector3((-(levelSideSize / 2f) + i) * wallSize.x, wallSize.y / 2, (-(levelSideSize / 2f) + j) * wallSize.z);
+                            go.transform.localScale = wallSize;
+                            go.transform.SetParent(level.transform);
                         }
                     } 
                     else
                     {
                         GameObject go = meshMaker.Box();
-                        go.transform.position = new Vector3(-50f + i, 0.5f, -50f + j);
+                        go.transform.position = new Vector3((-(levelSideSize / 2f) + i)* wallSize.x, wallSize.y/2, (-(levelSideSize / 2f) + j)*wallSize.z);
+                        go.transform.localScale = wallSize;
+                        go.transform.SetParent(level.transform);
                     }
-                    
-                    //GameObject go = meshMaker.Box();
-                    //go.transform.position = new Vector3(-50f + i, 0.5f, -50f + j);
+                }
+                else
+                {
+                    Debug.Log("hello");
+                    aiPoints.Add(new Vector3((-(levelSideSize / 2f) + i) * wallSize.x, wallSize.y / 2, (-(levelSideSize / 2f) + j) * wallSize.z));
                 }
             }
+        }
+    }
+
+    void MakeEnemys(int amount, GameObject type)
+    {
+        for(int i = 0; i < amount; i++)
+        {
+            GameObject go = Instantiate(type, aiPoints[Random.Range(0, aiPoints.Count)], Quaternion.identity) as GameObject;
+            go.GetComponent<AIBehavior>().patrolPos = aiPoints;
         }
     }
 }
