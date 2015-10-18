@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -27,6 +28,7 @@ public class AIBehavior : MonoBehaviour {
     public float stoppingDistance = 6f;
     public LayerMask FindPlayerMask;
 
+    public List<Vector3> patrolPos;
     public State _state = State.patrol;
     private float _waitedTime = Mathf.Epsilon;
     private Vector3 _destination = Vector3.zero;
@@ -81,9 +83,9 @@ public class AIBehavior : MonoBehaviour {
                 break;
 
             case State.patrol:
-                if(_destination == Vector3.zero)
+                if(_destination == Vector3.zero && patrolPos.Count > 0)
                 {
-                    _destination = new Vector3(Random.Range(-mapSize, mapSize), 0.0f, Random.Range(-mapSize, mapSize));
+                    _destination = patrolPos[Random.Range(0, patrolPos.Count)];
                     _meshAgent.SetDestination(_destination);
                 }
                 else if (Vector3.Distance(_destination, transform.position) <= hitDestination)
