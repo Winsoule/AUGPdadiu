@@ -6,12 +6,13 @@ using System.Collections;
 [RequireComponent(typeof(AIShoot))]
 public class AIBehavior : MonoBehaviour {
 
-    enum State
+    public enum State
     {
         idle,
         patrol,
         chase,
-        shooting
+        shooting,
+        searching
     };
 
     [HideInInspector]
@@ -26,9 +27,10 @@ public class AIBehavior : MonoBehaviour {
     public float stoppingDistance = 6f;
     public LayerMask FindPlayerMask;
 
-    private State _state = State.patrol;
+    public State _state = State.patrol;
     private float _waitedTime = Mathf.Epsilon;
     private Vector3 _destination = Vector3.zero;
+    //private Vector3 _lastSeenPlayerPos = Vector3.zero;
     private NavMeshAgent _meshAgent;
     private AIShoot _aiShoot;
     public float _tempTime;
@@ -44,27 +46,17 @@ public class AIBehavior : MonoBehaviour {
         _aiShoot = GetComponent<AIShoot>();
         units = GameObject.Find("GameManager").GetComponent<UnitManager>();
         units.enemies.Add(transform);
+
+        
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        player = units.player.gameObject;
-        switch (_state)
-        {
-            case State.chase:
-                break;
-            case State.idle:
-                break;
-            case State.patrol:
-                break;
-            case State.shooting:
-                break;
-            default:
-                break;
-        }
-
-
+        if (units.player != null)
+            player = units.player.gameObject;
+        else
+            player = null;
 
         RaycastHit hit;
         switch (_state)
@@ -103,17 +95,27 @@ public class AIBehavior : MonoBehaviour {
                 break;
 
             case State.chase:
+                if(player == null)
+                {
+                    _state = State.idle;
+                    break;
+                }
                 if (Vector3.Distance(player.transform.position, transform.position) <= stoppingDistance)
                 {
+                    
                     _meshAgent.Stop();
                 }
                 else
                 {
                     _meshAgent.Resume();
                 }
-                if (Vector3.Distance(player.transform.position, transform.position)> lostHimDistance)
+
+                if (Vector3.Distance(player.transform.position, transform.position) > lostHimDistance
+                    || (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, 10, FindPlayerMask)
+                    && hit.transform.root.gameObject != player))
                 {
-                    _state = State.idle;
+                    _state = State.searching;
+                    _meshAgent.SetDestination(player.transform.position);
                 }
                 else
                 {
@@ -128,10 +130,18 @@ public class AIBehavior : MonoBehaviour {
                         _state = State.shooting;
                         _aiShoot.Shoot(player.transform);
                         _meshAgent.Stop();
+                        _meshAgent.updateRotation = false;
                     }
                 }
                 break;
             case State.shooting:
+                if (player == null)
+                {
+                    _state = State.idle;
+                    _meshAgent.Resume();
+                    _meshAgent.updateRotation = true;
+                    break;
+                }
                 //If the player is either too far away or the robot doesn't have clear sight, it stops shooting.
                 if (Vector3.Distance(player.transform.position, transform.position) >= 10
                     || (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, 10, FindPlayerMask) && hit.transform.root.gameObject != player))
@@ -139,14 +149,22 @@ public class AIBehavior : MonoBehaviour {
                     _state = State.chase;
                     _aiShoot.StopShooting();
                     _meshAgent.Resume();
+                    _meshAgent.updateRotation = true;
                 }
+                break;
+            case State.searching:               
+                if (Vector3.Distance(_meshAgent.destination, transform.position) <= stoppingDistance)
+                {
+                    _state = State.idle;
+                }
+                FindPlayer();
                 break;
         }    
 	}
 
     void FindPlayer()
     {
-        if (SightRange() || HearRange())
+        if (player != null && (SightRange() || HearRange()))
         {
             RaycastHit hit;
             if (Physics.Raycast(new Ray(transform.position, player.transform.position - transform.position), out hit, FindPlayerMask))
@@ -175,5 +193,17 @@ public class AIBehavior : MonoBehaviour {
             return true;
         }
         return false;
+    }
+
+    void OnCollisionEnter(Collision col)
+    {
+        Transform obj = col.transform;
+        if (col.transform.root != null)
+            obj = col.transform.root;
+        if(obj.GetComponent<BulletBehaviour>() != null && _state != State.shooting && _state != State.chase)
+        {
+            _meshAgent.SetDestination(transform.position + Vector3.ProjectOnPlane(col.contacts[0].point - transform.position, Vector3.up).normalized);
+            _state = State.searching;
+        }
     }
 }

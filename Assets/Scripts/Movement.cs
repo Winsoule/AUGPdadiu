@@ -73,14 +73,18 @@ public class Movement : MonoBehaviour
 
     void FixedUpdate()
     {
-        body.velocity = Vector3.zero;
+        
         if (canMove)
         {
-            Vector3 dir = Vector3.ProjectOnPlane(cameraTransform.TransformDirection(new Vector3(controller.LeftStickX, 0, controller.LeftStickY)), Vector3.up);
-            body.MovePosition(transform.position + dir * Time.fixedDeltaTime * (gunHolstered ? 8 : 4));
+            Vector3 dir = Vector3.ProjectOnPlane(cameraTransform.TransformDirection(new Vector3(controller.LeftStickX, 0, controller.LeftStickY)), Vector3.up).normalized;
+            float speed = (gunHolstered ? 4 : 2);
+            Vector3 force = dir * speed * controller.LeftStick.Vector.magnitude;
+            if ((body.velocity + force).magnitude <= speed * 10)
+                body.AddForce(force * 10, ForceMode.Acceleration);
             if (dir.magnitude > 0.2f) travelDirection = dir;
             else if (!gunHolstered) travelDirection = gunhandler.forward;
         }
+        body.velocity -= body.velocity * 0.1f;
     }
 
     public void HolsterGuns(bool holster)

@@ -43,7 +43,7 @@ public class BulletBehaviour : MonoBehaviour {
             Debug.Log("I am sad, because I can't find 'GameManager' object with 'Bullets' component...");
         body = GetComponent<Rigidbody>();
         body.useGravity = false;
-        body.isKinematic = true;
+        //body.isKinematic = true;
 	}
 	
 	// Update is called once per frame
@@ -55,7 +55,7 @@ public class BulletBehaviour : MonoBehaviour {
             {
                 case Bullets.BulletType.normal:
                     //BEHAVIOUR, MATHAFACKA!!
-                    body.MovePosition(body.position + transform.forward * Time.fixedDeltaTime * 20);
+                    body.velocity = transform.forward * 20;
                     break;
                 default:
                     break;
@@ -63,8 +63,23 @@ public class BulletBehaviour : MonoBehaviour {
         }
 	}
 
-    void OnTriggerEnter(Collider col)
+    void OnCollisionEnter(Collision col)
     {
+        float impactForce = bulletManager.Impact(Bullets.BulletType.normal, transform.position);
+        if(col.rigidbody != null)
+        {
+            if(!col.rigidbody.isKinematic)
+                col.rigidbody.AddForce(Vector3.ProjectOnPlane(body.velocity.normalized, Vector3.up).normalized * impactForce, ForceMode.Impulse);
+            else
+            {
+                NavMeshAgent agent = col.gameObject.GetComponent<NavMeshAgent>();
+                if(agent != null)
+                {
+                    agent.velocity += Vector3.ProjectOnPlane(body.velocity.normalized, Vector3.up).normalized * impactForce;
+                }
+            }
+
+        }
         Destroy(gameObject);
     }
 }

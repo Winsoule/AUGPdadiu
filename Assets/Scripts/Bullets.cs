@@ -7,7 +7,10 @@ public class Bullets : MonoBehaviour {
     public GameObject bulletParent;
 
     public enum BulletType {normal}
+
+    //Bullet and impact prefabs:
     public GameObject bullet_normal;
+    public GameObject impact_normal;
 
     /*
     public class BulletInfo
@@ -50,6 +53,23 @@ public class Bullets : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    public float Impact(BulletType type, Vector3 pos)
+    {
+        return Impact(pos, type);
+    }
+
+    public float Impact(Vector3 pos, BulletType type)
+    {
+        switch(type)
+        {
+            case BulletType.normal:
+                Instantiate(impact_normal, pos, Quaternion.identity);
+                return 1;
+            default:
+                return 0;
+        }
+    }
 
     /////////////
     // BULLETS://

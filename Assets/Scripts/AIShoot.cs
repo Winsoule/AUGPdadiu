@@ -4,7 +4,7 @@ using System.Collections;
 [RequireComponent(typeof(AIBehavior))]
 public class AIShoot : MonoBehaviour {
 
-    enum State {off, deploying, deployed, shooting, retracting}
+    public enum State {off, deploying, deployed, shooting, retracting}
 
     public Transform Gun;
     public Transform Nozzle;
@@ -16,7 +16,7 @@ public class AIShoot : MonoBehaviour {
     AIBehavior behavior;
     Bullets bullets;
     Transform target;
-    State state = State.off;
+    public State state = State.off;
     bool shootSomething = false;
     float deployWeight = 0;
     float gunCooldownCounter = 0;
@@ -36,6 +36,8 @@ public class AIShoot : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        if (target == null)
+            shootSomething = false;
         gunCooldownCounter = Mathf.Max(gunCooldownCounter - Time.deltaTime, 0);
         if (gunCooldownCounter == 0)
         {
@@ -65,17 +67,25 @@ public class AIShoot : MonoBehaviour {
                 }
                 break;
             case State.deployed:
+                if (!shootSomething)
+                {
+                    state = State.retracting;
+                    break;
+                }
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Vector3.ProjectOnPlane(target.position - transform.position, Vector3.up).normalized), Time.deltaTime * 4);
                 Gun.rotation = Quaternion.Lerp(Gun.rotation, Quaternion.LookRotation(target.position - Gun.position, Vector3.up), Time.deltaTime * 10);
                 state = State.shooting;
                 break;
             case State.shooting:
+                if (!shootSomething)
+                {
+                    state = State.deployed;
+                    break;
+                }
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Vector3.ProjectOnPlane(target.position - transform.position, Vector3.up).normalized), Time.deltaTime * 4);
                 Gun.rotation = Quaternion.Lerp(Gun.rotation, Quaternion.LookRotation(target.position - Gun.position, Vector3.up), Time.deltaTime * 10);
                 if (canShoot)
-                    ShootBullets(Nozzle );
-                if (!shootSomething)
-                    state = State.retracting;
+                    ShootBullets(Nozzle);
                 break;
             case State.retracting:
                 deployWeight = Mathf.Clamp(deployWeight - Time.deltaTime, 0, 1);
