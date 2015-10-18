@@ -28,7 +28,7 @@ public class AIShoot : MonoBehaviour {
     {
         behavior = GetComponent<AIBehavior>();
         bullets = GameObject.Find("GameManager").GetComponent<Bullets>();
-        target = behavior.player.transform;
+        //target = behavior.player.transform;
         GunOrgLocalPos = Gun.localPosition;
         ArmOrgLocalPos = Arm.localPosition;
 	}
@@ -36,8 +36,10 @@ public class AIShoot : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if (target == null)
+        if (behavior == null || behavior.player == null)
+        {
             shootSomething = false;
+        }
         gunCooldownCounter = Mathf.Max(gunCooldownCounter - Time.deltaTime, 0);
         if (gunCooldownCounter == 0)
         {

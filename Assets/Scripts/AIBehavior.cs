@@ -16,7 +16,7 @@ public class AIBehavior : MonoBehaviour {
         searching
     };
 
-    [HideInInspector]
+    //[HideInInspector]
     public GameObject player;
     public float lookDistance = 2;
     public float hearDistance = 1;
@@ -111,7 +111,6 @@ public class AIBehavior : MonoBehaviour {
                 {
                     _meshAgent.Resume();
                 }
-
                 if (Vector3.Distance(player.transform.position, transform.position) > lostHimDistance
                     || (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, 10, FindPlayerMask)
                     && hit.transform.root.gameObject != player))
