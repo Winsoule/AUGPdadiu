@@ -12,6 +12,8 @@ public class MakeLevel : MonoBehaviour {
     public int numRoomsProcent = 10;
     public int NumOfSideWalls = 100;
     public int amountOfEnemys = 10;
+    public Material wallMat, portalMat;
+    public Transform cam;
 
     public List<Vector3> aiPoints = new List<Vector3>();
 
@@ -46,12 +48,16 @@ public class MakeLevel : MonoBehaviour {
         meshMaker = transform.GetComponent<MeshMaker>();
 
         //OldGenerateLevel(150, 1000);
-
-        Debug.Log((int)(NumOfSideWalls * NumOfSideWalls * (numRoomsProcent / 100f)));
+        
         
         GenerateLevel(((int)(NumOfSideWalls * NumOfSideWalls * (numRoomsProcent / 100f))), ((int)(NumOfSideWalls * NumOfSideWalls * (numRoomsProcent / 100f) * 10)), levelSize);
         MakeEnemys(1, boss);
         MakeEnemys(amountOfEnemys, enemy);
+
+        GameObject go = meshMaker.Torus(portalMat);
+        go.transform.position = Vector3.one;
+        go.transform.LookAt(cam);
+        go.transform.Rotate(new Vector3(90, 0, 0));
 
     }
 
@@ -100,7 +106,7 @@ public class MakeLevel : MonoBehaviour {
             {
                 count++;
                 floorSections[floorSectionX, floorSectionZ].FloorTiles[floorTileX, floorTileZ] = true;
-                Instantiate(meshMaker.Box(), new Vector3(currentXCoordinate, 0, currentZCoordinate), Quaternion.identity);
+                Instantiate(meshMaker.Box(wallMat), new Vector3(currentXCoordinate, 0, currentZCoordinate), Quaternion.identity);
             }
             ties++;
         }
@@ -168,23 +174,30 @@ public class MakeLevel : MonoBehaviour {
                     {
                         if(tiles[i + 1, j] || tiles[i - 1, j] || tiles[i, j + 1] || tiles[i, j - 1])
                         {
-                            GameObject go = meshMaker.Box();
+                            GameObject go = meshMaker.Box(wallMat);
                             go.transform.position = new Vector3((-(internalSizeX / 2) + i) * wallSize.x, wallSize.y / 2, (-(internalSizeZ / 2f) + j) * wallSize.z);
                             go.transform.localScale = wallSize;
                             go.transform.SetParent(level.transform);
+
+                            go.AddComponent<NavMeshObstacle>();
+                            go.GetComponent<NavMeshObstacle>().carving = true;
+                            go.AddComponent<BoxCollider>();
                         }
                     } 
                     else
                     {
-                        GameObject go = meshMaker.Box();
+                        GameObject go = meshMaker.Box(wallMat);
                         go.transform.position = new Vector3((-(internalSizeX / 2f) + i)* wallSize.x, wallSize.y/2, (-(internalSizeZ / 2f) + j)*wallSize.z);
                         go.transform.localScale = wallSize;
                         go.transform.SetParent(level.transform);
+
+                        go.AddComponent<NavMeshObstacle>();
+                        go.GetComponent<NavMeshObstacle>().carving = true;
+                        go.AddComponent<BoxCollider>();
                     }
                 }
                 else
                 {
-                    Debug.Log("hello");
                     aiPoints.Add(new Vector3((-(NumOfSideWalls / 2f) + i) * wallSize.x, wallSize.y / 2, (-(NumOfSideWalls / 2f) + j) * wallSize.z));
                 }
             }

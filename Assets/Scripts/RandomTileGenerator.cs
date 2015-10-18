@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class RandomTileGenerator : MonoBehaviour
 {
     MeshMaker meshMaker;
+    public Material wallMat;
     class FloorSection
     {
         public bool[,] FloorTiles = new bool[10, 10];
@@ -66,7 +67,7 @@ public class RandomTileGenerator : MonoBehaviour
         if (floorSections[floorSectionX, floorSectionZ].FloorTiles[floorTileX, floorTileZ])
         {
             floorSections[floorSectionX, floorSectionZ].FloorTiles[floorTileX, floorTileZ] = false;
-            Instantiate(meshMaker.Box(), new Vector3(currentXCoordinate, 0, currentZCoordinate), Quaternion.identity);
+            Instantiate(meshMaker.Box(wallMat), new Vector3(currentXCoordinate, 0, currentZCoordinate), Quaternion.identity);
         }
         //if(floorSections[])
         //Instantiate(FloorTilePrefab, new Vector3(x, 0, z), Quaternion.identity) as GameObject;
