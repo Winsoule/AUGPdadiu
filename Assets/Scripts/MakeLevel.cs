@@ -6,12 +6,11 @@ using System.Collections.Generic;
 public class MakeLevel : MonoBehaviour {
 
     MeshMaker meshMaker;
-    public GameObject enemy;
+    public GameObject enemy,boss;
     public Transform levelFloor;
-    public Vector3 wallSize;
-    public Vector3 lowWallSize;
+    public float wallHight;
     public int numRoomsProcent = 10;
-    public int levelSideSize = 100;
+    public int NumOfSideWalls = 100;
     public int amountOfEnemys = 10;
 
     public List<Vector3> aiPoints = new List<Vector3>();
@@ -48,9 +47,10 @@ public class MakeLevel : MonoBehaviour {
 
         //OldGenerateLevel(150, 1000);
 
-        Debug.Log((int)(levelSideSize * levelSideSize * (numRoomsProcent / 100f)));
+        Debug.Log((int)(NumOfSideWalls * NumOfSideWalls * (numRoomsProcent / 100f)));
         
-        GenerateLevel(((int)(levelSideSize * levelSideSize * (numRoomsProcent / 100f))), ((int)(levelSideSize * levelSideSize * (numRoomsProcent / 100f) * 10)), levelSize);
+        GenerateLevel(((int)(NumOfSideWalls * NumOfSideWalls * (numRoomsProcent / 100f))), ((int)(NumOfSideWalls * NumOfSideWalls * (numRoomsProcent / 100f) * 10)), levelSize);
+        MakeEnemys(1, boss);
         MakeEnemys(amountOfEnemys, enemy);
 
     }
@@ -108,35 +108,41 @@ public class MakeLevel : MonoBehaviour {
 
     void GenerateLevel(int maxRooms, int maxTries, Vector3 levelSize)
     {
+        Vector3 wallSize = new Vector3(levelSize.x / NumOfSideWalls, wallHight, levelSize.z / NumOfSideWalls);
+        int internalSizeX = (int)(levelSize.x/ wallSize.x);
+        int internalSizeZ = (int)(levelSize.z/ wallSize.z);
         GameObject level = new GameObject();
         level.name = "Level";
-        bool[,] tiles = new bool[levelSideSize, levelSideSize];
-        int rooms = 0;
+        bool[,] tiles = new bool[internalSizeX, internalSizeZ];
+        int rooms = 1;
         int tries = 0;
-        int currentXCoordinate = levelSideSize/2;
-        int currentYCoordinate = levelSideSize/2;
+        int currentXCoordinate = internalSizeX/2;
+        int currentYCoordinate = internalSizeZ/2;
 
         
+
+        tiles[currentXCoordinate, currentYCoordinate] = true;
+
         while (maxRooms > rooms || maxTries > tries)
         {
             if (Random.value > 0.5f) //Vertical or horizontal
             {
                 if (Random.value > 0.5f) //Up or down
                 {
-                    currentYCoordinate = Mathf.Clamp(currentYCoordinate + 1, 1, levelSideSize -2);
+                    currentYCoordinate = Mathf.Clamp(currentYCoordinate + 1, 1, internalSizeX -2);
                 }
                 else
                 {
-                    currentYCoordinate = Mathf.Clamp(currentYCoordinate - 1, 1, levelSideSize -2);
+                    currentYCoordinate = Mathf.Clamp(currentYCoordinate - 1, 1, internalSizeX -2);
                 }
             }
             else if (Random.value > 0.5f) //Left or right
             {
-                currentXCoordinate = Mathf.Clamp(currentXCoordinate + 1, 1, levelSideSize -2);
+                currentXCoordinate = Mathf.Clamp(currentXCoordinate + 1, 1, internalSizeZ -2);
             }
             else
             {
-                currentXCoordinate = Mathf.Clamp(currentXCoordinate - 1, 1, levelSideSize -2);
+                currentXCoordinate = Mathf.Clamp(currentXCoordinate - 1, 1, internalSizeZ -2);
             }
 
             if(!tiles[currentXCoordinate,currentYCoordinate])
@@ -151,19 +157,19 @@ public class MakeLevel : MonoBehaviour {
 
         Debug.Log("Found " + rooms + " rooms in " + tries + " tries.");
         
-        for (int i = 0; i < levelSideSize; i++)
+        for (int i = 0; i < internalSizeX; i++)
         {
-            for(int j = 0; j < levelSideSize; j++)
+            for(int j = 0; j < internalSizeZ; j++)
             {
                 if (!tiles[i,j])
                 {
                     
-                    if (i != 0 && i != levelSideSize-1 && j != 0 && j != levelSideSize-1)
+                    if (i != 0 && i != internalSizeX-1 && j != 0 && j != internalSizeZ-1)
                     {
                         if(tiles[i + 1, j] || tiles[i - 1, j] || tiles[i, j + 1] || tiles[i, j - 1])
                         {
                             GameObject go = meshMaker.Box();
-                            go.transform.position = new Vector3((-(levelSideSize / 2f) + i) * wallSize.x, wallSize.y / 2, (-(levelSideSize / 2f) + j) * wallSize.z);
+                            go.transform.position = new Vector3((-(internalSizeX / 2) + i) * wallSize.x, wallSize.y / 2, (-(internalSizeZ / 2f) + j) * wallSize.z);
                             go.transform.localScale = wallSize;
                             go.transform.SetParent(level.transform);
                         }
@@ -171,7 +177,7 @@ public class MakeLevel : MonoBehaviour {
                     else
                     {
                         GameObject go = meshMaker.Box();
-                        go.transform.position = new Vector3((-(levelSideSize / 2f) + i)* wallSize.x, wallSize.y/2, (-(levelSideSize / 2f) + j)*wallSize.z);
+                        go.transform.position = new Vector3((-(internalSizeX / 2f) + i)* wallSize.x, wallSize.y/2, (-(internalSizeZ / 2f) + j)*wallSize.z);
                         go.transform.localScale = wallSize;
                         go.transform.SetParent(level.transform);
                     }
@@ -179,7 +185,7 @@ public class MakeLevel : MonoBehaviour {
                 else
                 {
                     Debug.Log("hello");
-                    aiPoints.Add(new Vector3((-(levelSideSize / 2f) + i) * wallSize.x, wallSize.y / 2, (-(levelSideSize / 2f) + j) * wallSize.z));
+                    aiPoints.Add(new Vector3((-(NumOfSideWalls / 2f) + i) * wallSize.x, wallSize.y / 2, (-(NumOfSideWalls / 2f) + j) * wallSize.z));
                 }
             }
         }
