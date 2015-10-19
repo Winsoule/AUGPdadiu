@@ -10,6 +10,7 @@ public class Movement : MonoBehaviour
     public Transform eyes;
     public Transform cameraTransform;
     public Transform gunhandler;
+    public float movementSpeed = 4;
 
     [HideInInspector]
     public InputDevice controller;
@@ -77,7 +78,7 @@ public class Movement : MonoBehaviour
         if (canMove)
         {
             Vector3 dir = Vector3.ProjectOnPlane(cameraTransform.TransformDirection(new Vector3(controller.LeftStickX, 0, controller.LeftStickY)), Vector3.up).normalized;
-            float speed = (gunHolstered ? 4 : 2);
+            float speed = (gunHolstered ? movementSpeed : movementSpeed*0.5f);
             Vector3 force = dir * speed * controller.LeftStick.Vector.magnitude;
             if ((body.velocity + force).magnitude <= speed * 10)
                 body.AddForce(force * 10, ForceMode.Acceleration);

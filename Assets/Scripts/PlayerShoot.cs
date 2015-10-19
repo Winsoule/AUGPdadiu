@@ -17,7 +17,14 @@ public class PlayerShoot : MonoBehaviour {
     bool canShoot;
     InputDevice controller;
 
-    public float damage = 2;
+    public float damage = 1;
+    public float bulletSize = 1;
+
+    public float FireRate
+    {
+        get { return 1 / gunCooldown; }
+        set { gunCooldown = 1 / value; }
+    }
 
     public bool CanShoot
     {
@@ -61,7 +68,8 @@ public class PlayerShoot : MonoBehaviour {
         GameObject bullet = Instantiate(bullets.bulletParent, nozzles[currentGun].position, bulletRotation) as GameObject;
         BulletBehaviour bulletScript = bullet.GetComponent<BulletBehaviour>();
         bulletScript.SetBulletType(currentBulletType);
-        bulletScript.SetDamage(2);
+        bulletScript.SetDamage(damage);
+        bulletScript.SetBulletSize(bulletSize);
         StartCoroutine(Recoil(currentGun));
         currentGun = (currentGun + 1) % nozzles.Count;
         
