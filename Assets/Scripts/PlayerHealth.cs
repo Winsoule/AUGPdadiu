@@ -25,6 +25,7 @@ public class PlayerHealth : Health {
         if (health <= 0)
         {
             GetComponent<BlowIntoPieces>().BlowUp();
+            GameObject.Find("GameManager").GetComponent<UnitManager>().NewSave();
             Destroy(gameObject);
         }
     }

@@ -139,7 +139,7 @@ public class AISlasherBehavior : MonoBehaviour
     {
         if (player != null && (SightRange() || HearRange()))
         {
-            print("Play?");
+            //print("Play?");
             RaycastHit hit;
             if (Physics.Raycast(new Ray(transform.position, player.transform.position - transform.position), out hit, FindPlayerMask))
             {

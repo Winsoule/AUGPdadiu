@@ -5,16 +5,7 @@ public class Portal : MonoBehaviour {
     public float rotateSpeed = 360f;
 	// Use this for initialization
 	void Start () {
-       /*
-        var temp = Serializer.Load<Portal>("Poop");
-        if (temp != null)
-        {
-            //this = temp;
-        }
-        else
-        {
-            Serializer.Save<Portal>(this, "Poop");
-        }*/
+       
 	}
 	
 	// Update is called once per frame
@@ -26,6 +17,7 @@ public class Portal : MonoBehaviour {
     {
         if (col.name == "Player")
         {
+            GameObject.Find("GameManager").GetComponent<UnitManager>().Save();
             Application.LoadLevel(Application.loadedLevel);
         }
     }

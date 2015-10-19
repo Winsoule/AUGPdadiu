@@ -19,7 +19,7 @@ public class Health : MonoBehaviour {
 
     protected void RunAtStart()
     {
-        startHealth = health;
+        //startHealth = health;
     }
 	
 	// Update is called once per frame
@@ -28,13 +28,20 @@ public class Health : MonoBehaviour {
         {
             if (isBoss)
             {
-                GameObject go = meshMaker.Torus(portalMat);
-                go.name = "Portal";
-                go.transform.position = transform.position;
-                go.transform.rotation = Quaternion.Euler(50, 225, 0);
-                go.AddComponent<Portal>();
-                go.AddComponent<BoxCollider>();
-                go.GetComponent<BoxCollider>().isTrigger = true;
+                if(GameObject.Find("GameManager").GetComponent<MakeLevel>().bosses.Count == 1)
+                {
+                    GameObject go = meshMaker.Torus(portalMat);
+                    go.name = "Portal";
+                    go.transform.position = transform.position;
+                    go.transform.rotation = Quaternion.Euler(50, 225, 0);
+                    go.AddComponent<Portal>();
+                    go.AddComponent<BoxCollider>();
+                    go.GetComponent<BoxCollider>().isTrigger = true;
+                }
+                else
+                {
+                    GameObject.Find("GameManager").GetComponent<MakeLevel>().bosses.Remove(gameObject);
+                }
             }
             GetComponent<BlowIntoPieces>().BlowUp();
             Destroy(gameObject);

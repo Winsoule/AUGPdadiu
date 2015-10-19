@@ -24,8 +24,10 @@ public class Movement : MonoBehaviour
     [HideInInspector]
     public bool canLook = true;
 
+
+
     // Use this for initialization
-    void Start ()
+    void Awake ()
     {
         body = GetComponent<Rigidbody>();
         controller = InputManager.ActiveDevice;
