@@ -40,12 +40,4 @@ public class Health : MonoBehaviour {
             Destroy(gameObject);
         }
     }
-
-    void OnCollisionEnter(Collision col)
-    {
-        if (col.transform.root != null && col.transform.root.GetComponent<BulletBehaviour>() != null)
-        {
-            health -= 1;
-        }
-    }
 }

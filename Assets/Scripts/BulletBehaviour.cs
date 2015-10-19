@@ -9,6 +9,10 @@ public class BulletBehaviour : MonoBehaviour {
     bool bulletTypeSet = false;
     GameObject currentBulletCasing;
     Rigidbody body;
+
+    float damage = 1;
+    float setDamage = 1;
+    bool useSetDamage = false;
     //Bullets.BulletInfo bulletInfo;
 
 
@@ -18,6 +22,12 @@ public class BulletBehaviour : MonoBehaviour {
         CreateBullet();
         bulletTypeSet = true;
         return;
+    }
+
+    public void SetDamage(float newDamage)
+    {
+        setDamage = newDamage;
+        useSetDamage = true;
     }
 
     void CreateBullet()
@@ -66,7 +76,15 @@ public class BulletBehaviour : MonoBehaviour {
     void OnCollisionEnter(Collision col)
     {
         float impactForce = bulletManager.Impact(Bullets.BulletType.normal, transform.position);
-        if(col.rigidbody != null)
+        Health h = col.gameObject.GetComponent<Health>();
+        if (h != null)
+        {
+            if (useSetDamage)
+                h.health -= setDamage;
+            else
+                h.health -= damage;
+        }
+        if (col.rigidbody != null)
         {
             if(!col.rigidbody.isKinematic)
                 col.rigidbody.AddForce(Vector3.ProjectOnPlane(body.velocity.normalized, Vector3.up).normalized * impactForce, ForceMode.Impulse);
