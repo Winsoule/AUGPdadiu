@@ -3,12 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
+[RequireComponent (typeof(UnitManager))]
 public class Menu : MonoBehaviour {
 
+    UnitManager manager;
+
     public List<Transform> Buttons;
-    public Transform Button2;
-    public Transform Button3;
-    public Transform Button4;
+
+    public void Continue()
+    {
+        Application.LoadLevel("Jensarea");
+    }
 
     public void ButtonTurnMeOff(Transform t)
     {
@@ -17,31 +22,31 @@ public class Menu : MonoBehaviour {
 
     public void IncreaseMaxHealth(Transform buttonTransform)
     {
-        //Increase MaxHealth!!
+        manager.playerMaxHealth += 1f;
         return;
     }
 
     public void IncreaseHealthRegen(Transform buttonTransform)
     {
-        //Increase HealthRegen!!
+        manager.playerRegen += 0.1f;
         return;
     }
 
     public void IncreaseMovementSpeed(Transform buttonTransform)
     {
-        //Increase MovementSpeed!!
+        manager.movementSpeed += 0.5F;
         return;
     }
 
     public void IncreaseDamage(Transform buttonTransform)
     {
-        //Increase Damage!!
+        manager.playerDamage += 1f;
         return;
     }
 
     public void IncreaseFireRate(Transform buttonTransform)
     {
-        //Increase MaxHealth!!
+        manager.playerAttackSpeed += 0.2f;
         return;
     }
 
@@ -53,25 +58,27 @@ public class Menu : MonoBehaviour {
 
     public void IncreaseLifeLink(Transform buttonTransform)
     {
-        //Increase LifeLink!!
+        manager.playerLifelink += 0.2f;
         return;
     }
 
     public void IncreaseBulletSize(Transform buttonTransform)
     {
-        //Increase BulletSize!!
+        manager.bulletSize += 0.2f;
         return;
     }
 
     public void IncreaseBulletSpeed(Transform buttonTransform)
     {
-        //Increase MaxHealth!!
+        manager.bulletSpeed += 0.2f;
         return;
     }
     // Use this for initialization
     void Start ()
     {
-        foreach(Transform t in Buttons)
+
+        manager = Serializer.Load<UnitManager>("UnitInfo");
+        foreach (Transform t in Buttons)
         {
             Button button = t.GetComponentInChildren<Button>();
             Text buttonText = button.transform.GetComponentInChildren<Text>();

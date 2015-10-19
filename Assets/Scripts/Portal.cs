@@ -17,8 +17,8 @@ public class Portal : MonoBehaviour {
     {
         if (col.name == "Player")
         {
-            GameObject.Find("GameManager").GetComponent<UnitManager>().Save();
-            Application.LoadLevel(Application.loadedLevel);
+            GameObject.Find("GameManager").GetComponent<UnitManager>().playerHealth = col.GetComponent<PlayerHealth>().health;
+            Application.LoadLevel("Menu");
         }
     }
 }

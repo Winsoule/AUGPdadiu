@@ -21,7 +21,7 @@ public class PlayerHealth : Health {
 	// Update is called once per frame
 	void Update ()
     {
-        health += healthRegen;
+        health = Mathf.Clamp(health + healthRegen * Time.deltaTime, 0, startHealth);
         if (theresAHealthBar)
             healthBar.sizeDelta = new Vector2(width * (health / startHealth) + float.Epsilon, healthBar.sizeDelta.y);
         if (health <= 0)

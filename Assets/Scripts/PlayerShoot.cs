@@ -16,9 +16,11 @@ public class PlayerShoot : MonoBehaviour {
     float gunCooldown = 0.1f;
     bool canShoot;
     InputDevice controller;
+    Health health;
 
     public float damage = 1;
     public float bulletSize = 1;
+    public float bulletSpeed = 1;
 
     public float FireRate
     {
@@ -44,6 +46,7 @@ public class PlayerShoot : MonoBehaviour {
     {
         controller = InputManager.ActiveDevice;
         bullets = GameObject.Find("GameManager").GetComponent<Bullets>();
+        health = GetComponent<Health>();
     }
 
     // Update is called once per frame
@@ -70,6 +73,8 @@ public class PlayerShoot : MonoBehaviour {
         bulletScript.SetBulletType(currentBulletType);
         bulletScript.SetDamage(damage);
         bulletScript.SetBulletSize(bulletSize);
+        bulletScript.SetLifeLink(health);
+        bulletScript.SetBulletSpeedScalar(bulletSpeed);
         StartCoroutine(Recoil(currentGun));
         currentGun = (currentGun + 1) % nozzles.Count;
         
