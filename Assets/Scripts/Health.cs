@@ -20,19 +20,18 @@ public class Health : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}
+        if (health <= 0)
+        {
+            GetComponent<BlowIntoPieces>().BlowUp();
+            Destroy(gameObject);
+        }
+    }
 
     void OnCollisionEnter(Collision col)
     {
         if (col.transform.root != null && col.transform.root.GetComponent<BulletBehaviour>() != null)
         {
             health -= 1;
-            if (health == 0)
-            {
-                GetComponent<BlowIntoPieces>().BlowUp();
-                Destroy(gameObject);
-            }
         }
     }
 }

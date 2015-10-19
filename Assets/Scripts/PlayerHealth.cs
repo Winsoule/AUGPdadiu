@@ -22,7 +22,12 @@ public class PlayerHealth : Health {
     {
         if(theresAHealthBar)
             healthBar.sizeDelta = new Vector2(width * (health / startHealth) + float.Epsilon, healthBar.sizeDelta.y);
-	}
+        if (health <= 0)
+        {
+            GetComponent<BlowIntoPieces>().BlowUp();
+            Destroy(gameObject);
+        }
+    }
 
     void OnCollisionEnter(Collision col)
     {
@@ -30,13 +35,6 @@ public class PlayerHealth : Health {
         {
             Instantiate(hitBlood, col.contacts[0].point, Quaternion.LookRotation(-col.contacts[0].normal));
             health -= 1;
-            if(theresAHealthBar)
-                healthBar.sizeDelta = new Vector2(width * (health / startHealth) + float.Epsilon, healthBar.sizeDelta.y);
-            if (health == 0)
-            {
-                GetComponent<BlowIntoPieces>().BlowUp();
-                Destroy(gameObject);
-            }
         }
     }
 }

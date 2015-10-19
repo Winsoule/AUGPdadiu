@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class BlowIntoPieces : MonoBehaviour {
 
     public List<Transform> piecesToBlowUp;
+    public List<Transform> immediateDestroy;
     public GameObject explosion;
 
 	// Use this for initialization
@@ -32,12 +33,20 @@ public class BlowIntoPieces : MonoBehaviour {
                 blowThisUp.Add(tempBody);
                 t.parent = null;
                 t.gameObject.AddComponent<DestroyAfter5Seconds>();
+                t.gameObject.layer = 11;
             }
             foreach (Rigidbody r in blowThisUp)
             {
                 r.AddForceAtPosition(((r.position + Vector3.up) - (transform.position + Random.onUnitSphere * 0.01f)).normalized * Random.Range(8, 12), r.transform.TransformPoint(Random.insideUnitSphere * 0.1f),  ForceMode.VelocityChange);
             }
             Instantiate(explosion, transform.position, Quaternion.LookRotation(transform.up));
+        }
+        if(immediateDestroy.Count > 0)
+        {
+            foreach(Transform t in immediateDestroy)
+            {
+                Destroy(t.gameObject);
+            }
         }
     }
 
