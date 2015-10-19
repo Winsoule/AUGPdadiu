@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
+[RequireComponent (typeof(MeshMaker))]
 public class BlowIntoPieces : MonoBehaviour {
 
     public List<Transform> piecesToBlowUp;

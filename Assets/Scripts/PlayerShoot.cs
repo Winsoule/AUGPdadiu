@@ -55,7 +55,8 @@ public class PlayerShoot : MonoBehaviour {
     public void Shoot()
     {
         CanShoot = false;
-        GameObject bullet = Instantiate(bullets.bulletParent, nozzles[currentGun].position, nozzles[currentGun].rotation) as GameObject;
+        Quaternion bulletRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(nozzles[currentGun].forward, Vector3.up), nozzles[currentGun].up);
+        GameObject bullet = Instantiate(bullets.bulletParent, nozzles[currentGun].position, bulletRotation) as GameObject;
         BulletBehaviour bulletScript = bullet.GetComponent<BulletBehaviour>();
         bulletScript.SetBulletType(currentBulletType);
         StartCoroutine(Recoil(currentGun));
