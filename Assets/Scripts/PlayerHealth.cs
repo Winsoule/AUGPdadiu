@@ -7,6 +7,7 @@ public class PlayerHealth : Health {
     public GameObject hitBlood;
     float width;
     bool theresAHealthBar = true;
+    public float healthRegen = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +21,8 @@ public class PlayerHealth : Health {
 	// Update is called once per frame
 	void Update ()
     {
-        if(theresAHealthBar)
+        health += healthRegen;
+        if (theresAHealthBar)
             healthBar.sizeDelta = new Vector2(width * (health / startHealth) + float.Epsilon, healthBar.sizeDelta.y);
         if (health <= 0)
         {

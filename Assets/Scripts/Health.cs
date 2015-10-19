@@ -11,6 +11,8 @@ public class Health : MonoBehaviour {
     public Material portalMat;
     MeshMaker meshMaker;
 
+    public float lifeLinkScaler = 0;
+
     // Use this for initialization
     void Start () {
         RunAtStart();
@@ -20,6 +22,11 @@ public class Health : MonoBehaviour {
     protected void RunAtStart()
     {
         //startHealth = health;
+    }
+
+    public void LifeLink(float gainedLife)
+    {
+        health = Mathf.Clamp(health + gainedLife * lifeLinkScaler, 0, startHealth);
     }
 	
 	// Update is called once per frame
@@ -45,14 +52,6 @@ public class Health : MonoBehaviour {
             }
             GetComponent<BlowIntoPieces>().BlowUp();
             Destroy(gameObject);
-        }
-    }
-
-    void OnCollisionEnter(Collision col)
-    {
-        if (col.transform.root != null && col.transform.root.GetComponent<BulletBehaviour>() != null)
-        {
-            health -= 1;
         }
     }
 }

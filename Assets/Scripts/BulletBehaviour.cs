@@ -9,6 +9,16 @@ public class BulletBehaviour : MonoBehaviour {
     bool bulletTypeSet = false;
     GameObject currentBulletCasing;
     Rigidbody body;
+    Health ownersHealth;
+
+    float damage = 1;
+    float setDamage = 1;
+    float bulletSpeedScalar = 1;
+    bool useSetDamage = false;
+    bool useLifeLink = false;
+
+    Vector3 orgBulletSize = Vector3.one;
+    Vector3 newBulletSize = Vector3.one;
     //Bullets.BulletInfo bulletInfo;
 
 
@@ -20,6 +30,29 @@ public class BulletBehaviour : MonoBehaviour {
         return;
     }
 
+    public void SetDamage(float newDamage)
+    {
+        setDamage = newDamage;
+        useSetDamage = true;
+    }
+
+    public void SetLifeLink(Health h)
+    {
+        ownersHealth = h;
+        useLifeLink = true;
+    }
+
+    public void SetBulletSize(float newSize)
+    {
+        newBulletSize = orgBulletSize * newSize;
+        currentBulletCasing.transform.localScale = newBulletSize;
+    }
+
+    public void SetBulletSpeedScalar(float newSpeed)
+    {
+        bulletSpeedScalar = newSpeed;
+    }
+
     void CreateBullet()
     {
         if (currentBulletCasing != null)
@@ -29,6 +62,7 @@ public class BulletBehaviour : MonoBehaviour {
             case Bullets.BulletType.normal:
                 currentBulletCasing = Instantiate(bulletManager.GetBullet(bulletType), transform.position, transform.rotation) as GameObject;
                 currentBulletCasing.transform.parent = transform;
+                orgBulletSize = currentBulletCasing.transform.localScale;
                 break;
             default:
                 break;
@@ -55,7 +89,7 @@ public class BulletBehaviour : MonoBehaviour {
             {
                 case Bullets.BulletType.normal:
                     //BEHAVIOUR, MATHAFACKA!!
-                    body.velocity = transform.forward * 20;
+                    body.velocity = transform.forward * 20 * bulletSpeedScalar;
                     break;
                 default:
                     break;
@@ -66,7 +100,15 @@ public class BulletBehaviour : MonoBehaviour {
     void OnCollisionEnter(Collision col)
     {
         float impactForce = bulletManager.Impact(Bullets.BulletType.normal, transform.position);
-        if(col.rigidbody != null)
+        Health h = col.gameObject.GetComponent<Health>();
+        if (h != null)
+        {
+            float dealtDamage = (useSetDamage ? setDamage : damage);
+            h.health -= dealtDamage;
+            if(useLifeLink)
+                ownersHealth.LifeLink(dealtDamage);
+        }
+        if (col.rigidbody != null)
         {
             if(!col.rigidbody.isKinematic)
                 col.rigidbody.AddForce(Vector3.ProjectOnPlane(body.velocity.normalized, Vector3.up).normalized * impactForce, ForceMode.Impulse);
