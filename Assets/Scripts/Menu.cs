@@ -2,18 +2,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using InControl;
 
 [RequireComponent (typeof(UnitManager))]
 public class Menu : MonoBehaviour {
 
     UnitManager manager;
+    [HideInInspector]
+    public InputDevice controller;
 
     public List<Transform> Buttons;
+    public Transform ButtonHolder;
     public Text moneyText;
+    public Transform selector;
+
+    List<RectTransform> buttonsSorted = new List<RectTransform>();
+
+    float moveSelectorCooldownCounter = 0;
+    float moveSelectorCooldown = 1;
+    int selectorPosition = 0;
 
     void Start()
     {
-
+        controller = InputManager.ActiveDevice;
+        foreach (Transform t in ButtonHolder)
+        {
+            buttonsSorted.Add(t as RectTransform);
+        }
         manager = GetComponent<UnitManager>();
         foreach (Transform t in Buttons)
         {
@@ -22,12 +37,25 @@ public class Menu : MonoBehaviour {
             Text price = t.FindChild("PriceFrame").GetComponentInChildren<Text>();
             AssignRandomButton(button, buttonText, price);
         }
+        selector.position = buttonsSorted[0].position - Vector3.right * (buttonsSorted[0].sizeDelta.x + 20);
     }
 
     void Update()
     {
+        controller = InputManager.ActiveDevice;
+        moveSelectorCooldownCounter = Mathf.Clamp(moveSelectorCooldownCounter - Time.deltaTime, 0, moveSelectorCooldown);
         //manager.money = money;
         moneyText.text = string.Format("Money: {0}", manager.money);
+        if(controller.LeftStickY < -0.2f && moveSelectorCooldownCounter <= 0)
+        {
+            selectorPosition = (selectorPosition + 1) % buttonsSorted.Count;
+            selector.position = buttonsSorted[selectorPosition].position - Vector3.right * (buttonsSorted[selectorPosition].sizeDelta.x + 20);
+            moveSelectorCooldownCounter = moveSelectorCooldown;
+        }
+        else if(controller.LeftStickY > -0.2f && controller.LeftStickY < 0.2f)
+        {
+            moveSelectorCooldownCounter = 0;
+        }
     }
 
     public void Continue()
