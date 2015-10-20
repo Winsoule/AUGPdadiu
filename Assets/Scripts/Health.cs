@@ -51,6 +51,9 @@ public class Health : MonoBehaviour {
                 }
             }
             GetComponent<BlowIntoPieces>().BlowUp();
+            DropMoney money = GetComponent<DropMoney>();
+            if (money != null)
+                money.DropSomeMoney();
             Destroy(gameObject);
         }
     }

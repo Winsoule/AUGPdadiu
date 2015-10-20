@@ -9,6 +9,26 @@ public class Menu : MonoBehaviour {
     UnitManager manager;
 
     public List<Transform> Buttons;
+    public Text moneyText;
+
+    void Start()
+    {
+
+        manager = GetComponent<UnitManager>();
+        foreach (Transform t in Buttons)
+        {
+            Button button = t.GetComponentInChildren<Button>();
+            Text buttonText = button.transform.GetComponentInChildren<Text>();
+            Text price = t.FindChild("PriceFrame").GetComponentInChildren<Text>();
+            AssignRandomButton(button, buttonText, price);
+        }
+    }
+
+    void Update()
+    {
+        //manager.money = money;
+        moneyText.text = string.Format("Money: {0}", manager.money);
+    }
 
     public void Continue()
     {
@@ -20,72 +40,106 @@ public class Menu : MonoBehaviour {
         t.gameObject.SetActive(false);
     }
 
-    public void IncreaseMaxHealth(Transform buttonTransform)
+    public void IncreaseMaxHealth(Transform buttonTransform, int price)
     {
-        manager.playerMaxHealth += 1f;
+        if (price <= manager.money)
+        {
+            manager.playerMaxHealth += 1f;
+            manager.money -= price;
+            ButtonTurnMeOff(buttonTransform);
+        }
         return;
     }
 
-    public void IncreaseHealthRegen(Transform buttonTransform)
+    public void IncreaseHealthRegen(Transform buttonTransform, int price)
     {
-        manager.playerRegen += 0.1f;
+        if (price <= manager.money)
+        {
+            manager.playerRegen += 0.1f;
+            manager.money -= price;
+            ButtonTurnMeOff(buttonTransform);
+        }
         return;
     }
 
-    public void IncreaseMovementSpeed(Transform buttonTransform)
+    public void IncreaseMovementSpeed(Transform buttonTransform, int price)
     {
-        manager.movementSpeed += 0.5F;
+        if (price <= manager.money)
+        {
+            manager.movementSpeed += 0.5f;
+            manager.money -= price;
+            ButtonTurnMeOff(buttonTransform);
+        }
         return;
     }
 
-    public void IncreaseDamage(Transform buttonTransform)
+    public void IncreaseDamage(Transform buttonTransform, int price)
     {
-        manager.playerDamage += 1f;
+        if (price <= manager.money)
+        {
+            manager.playerDamage += 0.5f;
+            manager.money -= price;
+            ButtonTurnMeOff(buttonTransform);
+        }
         return;
     }
 
-    public void IncreaseFireRate(Transform buttonTransform)
+    public void IncreaseFireRate(Transform buttonTransform, int price)
     {
-        manager.playerAttackSpeed += 0.2f;
+        if (price <= manager.money)
+        {
+            manager.playerAttackSpeed += 1f;
+            manager.money -= price;
+            ButtonTurnMeOff(buttonTransform);
+        }
         return;
     }
 
-    public void IncreaseMoneyDropping(Transform buttonTransform)
+    public void IncreaseMoneyDropping(Transform buttonTransform, int price)
     {
-        //Increase MaxHealth!!
+        if (price <= manager.money)
+        {
+            manager.moneyDroppingModifier += 0.5f;
+            manager.money -= price;
+            ButtonTurnMeOff(buttonTransform);
+        }
         return;
     }
 
-    public void IncreaseLifeLink(Transform buttonTransform)
+    public void IncreaseLifeLink(Transform buttonTransform, int price)
     {
-        manager.playerLifelink += 0.2f;
+        if (price <= manager.money)
+        {
+            manager.playerLifelink += 0.05f;
+            manager.money -= price;
+            ButtonTurnMeOff(buttonTransform);
+        }
         return;
     }
 
-    public void IncreaseBulletSize(Transform buttonTransform)
+    public void IncreaseBulletSize(Transform buttonTransform, int price)
     {
-        manager.bulletSize += 0.2f;
+        if (price <= manager.money)
+        {
+            manager.bulletSize += 0.2f;
+            manager.money -= price;
+            ButtonTurnMeOff(buttonTransform);
+        }
         return;
     }
 
-    public void IncreaseBulletSpeed(Transform buttonTransform)
+    public void IncreaseBulletSpeed(Transform buttonTransform, int price)
     {
-        manager.bulletSpeed += 0.2f;
+        if (price <= manager.money)
+        {
+            manager.bulletSpeed += 0.2f;
+            manager.money -= price;
+            ButtonTurnMeOff(buttonTransform);
+        }
         return;
     }
     // Use this for initialization
-    void Start ()
-    {
-
-        manager = Serializer.Load<UnitManager>("UnitInfo");
-        foreach (Transform t in Buttons)
-        {
-            Button button = t.GetComponentInChildren<Button>();
-            Text buttonText = button.transform.GetComponentInChildren<Text>();
-            Text price = t.FindChild("PriceFrame").GetComponentInChildren<Text>();
-            AssignRandomButton(button, buttonText, price);
-        }
-	}
+    
 	
     void AssignRandomButton(Button button, Text buttonText, Text price)
     {
@@ -93,55 +147,50 @@ public class Menu : MonoBehaviour {
         switch(randomIndex)
         {
             case 0:
-                button.onClick.AddListener(() => IncreaseMaxHealth(button.transform.parent));
-                button.onClick.AddListener(() => ButtonTurnMeOff(button.transform.parent));
+                button.onClick.AddListener(() => IncreaseMaxHealth(button.transform.parent, 8));
                 buttonText.text = "Max Health: +1";
+                price.text = "8$";
                 break;
             case 1:
-                button.onClick.AddListener(() => IncreaseHealthRegen(button.transform.parent));
-                button.onClick.AddListener(() => ButtonTurnMeOff(button.transform.parent));
+                button.onClick.AddListener(() => IncreaseHealthRegen(button.transform.parent,8));
                 buttonText.text = "Health Regeneration: +0.1/s";
+                price.text = "8$";
                 break;
             case 2:
-                button.onClick.AddListener(() => IncreaseMovementSpeed(button.transform.parent));
-                button.onClick.AddListener(() => ButtonTurnMeOff(button.transform.parent));
+                button.onClick.AddListener(() => IncreaseMovementSpeed(button.transform.parent,8));
                 buttonText.text = "Movement speed: +1";
+                price.text = "8$";
                 break;
             case 3:
-                button.onClick.AddListener(() => IncreaseDamage(button.transform.parent));
-                button.onClick.AddListener(() => ButtonTurnMeOff(button.transform.parent));
+                button.onClick.AddListener(() => IncreaseDamage(button.transform.parent,8));
                 buttonText.text = "Damage: +1";
+                price.text = "8$";
                 break;
             case 4:
-                button.onClick.AddListener(() => IncreaseFireRate(button.transform.parent));
-                button.onClick.AddListener(() => ButtonTurnMeOff(button.transform.parent));
+                button.onClick.AddListener(() => IncreaseFireRate(button.transform.parent,8));
                 buttonText.text = "Fire Rate: +0.2/s";
+                price.text = "8$";
                 break;
             case 5:
-                button.onClick.AddListener(() => IncreaseMoneyDropping(button.transform.parent));
-                button.onClick.AddListener(() => ButtonTurnMeOff(button.transform.parent));
+                button.onClick.AddListener(() => IncreaseMoneyDropping(button.transform.parent,8));
                 buttonText.text = "Enemy Money Dropped: +1";
+                price.text = "8$";
                 break;
             case 6:
-                button.onClick.AddListener(() => IncreaseLifeLink(button.transform.parent));
-                button.onClick.AddListener(() => ButtonTurnMeOff(button.transform.parent));
+                button.onClick.AddListener(() => IncreaseLifeLink(button.transform.parent,8));
                 buttonText.text = "Life Drain: +0.1/damage";
+                price.text = "8$";
                 break;
             case 7:
-                button.onClick.AddListener(() => IncreaseBulletSize(button.transform.parent));
-                button.onClick.AddListener(() => ButtonTurnMeOff(button.transform.parent));
+                button.onClick.AddListener(() => IncreaseBulletSize(button.transform.parent,8));
                 buttonText.text = "Bullet Size: x2";
+                price.text = "8$";
                 break;
             case 8:
-                button.onClick.AddListener(() => IncreaseBulletSpeed(button.transform.parent));
-                button.onClick.AddListener(() => ButtonTurnMeOff(button.transform.parent));
+                button.onClick.AddListener(() => IncreaseBulletSpeed(button.transform.parent,5));
                 buttonText.text = "Bullet Speed: +1";
+                price.text = "5$";
                 break;
         }
     }
-
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

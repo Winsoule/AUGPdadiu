@@ -15,7 +15,8 @@ public class UnitManager : MonoBehaviour {
     public float playerLifelink;
     public float bulletSize;
     public float bulletSpeed;
-    public int money;
+    public int money = 1;
+    public float moneyDroppingModifier;
     public float movementSpeed;
 
     [HideInInspector]
@@ -57,7 +58,8 @@ public class UnitManager : MonoBehaviour {
         playerLifelink = temp.playerLifelink;
         bulletSize = temp.bulletSize;
         bulletSpeed = temp.bulletSpeed;
-
+        moneyDroppingModifier = temp.moneyDroppingModifier;
+        money = temp.money;
     }
 
     // Update is called once per frame
@@ -90,6 +92,7 @@ public class UnitManager : MonoBehaviour {
         playerLifelink = 0;
         bulletSize = 1;
         bulletSpeed = 1;
+        moneyDroppingModifier = 1;
     Debug.Log("NewGAME");
 
         Serializer.Save<UnitManager>(this, "UnitInfo");
