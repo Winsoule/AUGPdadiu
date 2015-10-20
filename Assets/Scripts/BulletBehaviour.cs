@@ -11,8 +11,8 @@ public class BulletBehaviour : MonoBehaviour {
     Rigidbody body;
     Health ownersHealth;
 
-    float damage = 1;
-    float setDamage = 1;
+    public float damage = 1;
+    public float setDamage = 1;
     float bulletSpeedScalar = 1;
     bool useSetDamage = false;
     bool useLifeLink = false;

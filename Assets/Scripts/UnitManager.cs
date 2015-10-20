@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [System.Serializable]
 public class UnitManager : MonoBehaviour {
 
+    public int maxLevels = 4;
     public int spawnAmount = 10;
     public int level = 1;
     public float playerMaxHealth;
@@ -20,8 +21,6 @@ public class UnitManager : MonoBehaviour {
 
     [HideInInspector]
     public Transform player;
-    [HideInInspector]
-    public List<Transform> enemies = new List<Transform>();
     UnitManager temp;
     // Use this for initialization
     void Start ()
@@ -33,6 +32,7 @@ public class UnitManager : MonoBehaviour {
             var playerinfo = player.GetComponent<PlayerHealth>();
             var playerMovement = player.GetComponent<Movement>();
             var playerShoot = player.GetComponent<PlayerShoot>();
+
 
             level = temp.level;
             playerinfo.startHealth = temp.playerMaxHealth;
@@ -47,6 +47,7 @@ public class UnitManager : MonoBehaviour {
 
         }
 
+        spawnAmount = temp.spawnAmount;
         level = temp.level;
         playerMaxHealth = temp.playerMaxHealth;
         playerRegen = temp.playerRegen;
@@ -57,6 +58,7 @@ public class UnitManager : MonoBehaviour {
         playerLifelink = temp.playerLifelink;
         bulletSize = temp.bulletSize;
         bulletSpeed = temp.bulletSpeed;
+        maxLevels = temp.maxLevels;
 
     }
 
@@ -67,17 +69,22 @@ public class UnitManager : MonoBehaviour {
         {
             Application.LoadLevel("MainMenu");
         }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
 
     public void Save()
     {
-        level++;
+        
         Serializer.Save<UnitManager>(this, "UnitInfo");
     }
 
     public void NewSave()
     {
+        maxLevels = 4;
         spawnAmount = 10;
         level = 1;
         playerMaxHealth = 3;

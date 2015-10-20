@@ -12,6 +12,8 @@ public class Menu : MonoBehaviour {
 
     public void Continue()
     {
+        manager.level++;
+        manager.Save();
         Application.LoadLevel("Jensarea");
     }
 

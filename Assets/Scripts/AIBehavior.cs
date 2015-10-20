@@ -47,7 +47,6 @@ public class AIBehavior : MonoBehaviour {
         _meshAgent = transform.GetComponent<NavMeshAgent>();
         _aiShoot = GetComponent<AIShoot>();
         units = GameObject.Find("GameManager").GetComponent<UnitManager>();
-        units.enemies.Add(transform);
 
         
     }

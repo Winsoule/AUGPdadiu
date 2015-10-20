@@ -48,7 +48,6 @@ public class LaserBossBehavior : MonoBehaviour
         _meshAgent = transform.GetComponent<NavMeshAgent>();
         _aiShoot = GetComponent<LaserBossLaser>();
         units = GameObject.Find("GameManager").GetComponent<UnitManager>();
-        units.enemies.Add(transform);
 
 
     }

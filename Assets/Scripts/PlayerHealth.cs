@@ -37,7 +37,7 @@ public class PlayerHealth : Health {
         if (col.transform.root != null && col.transform.root.GetComponent<BulletBehaviour>() != null)
         {
             Instantiate(hitBlood, col.contacts[0].point, Quaternion.LookRotation(-col.contacts[0].normal));
-            health -= 1;
+            
         }
     }
 }

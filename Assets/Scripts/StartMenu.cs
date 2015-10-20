@@ -17,4 +17,9 @@ public class StartMenu : MonoBehaviour
         Application.LoadLevel("Jensarea");
     }
 
+    public void MainMenu()
+    {
+        Application.LoadLevel("MainMenu");
+    }
+
 }
