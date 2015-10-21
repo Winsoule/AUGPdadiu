@@ -9,10 +9,13 @@ public class BlowIntoPieces : MonoBehaviour {
     public List<Transform> piecesToBlowUp;
     public List<Transform> immediateDestroy;
     public GameObject explosion;
+    public float shakeAmount = 0;
+
+    CameraShake cameraShake;
 
 	// Use this for initialization
 	void Start () {
-	
+        cameraShake = Camera.main.GetComponent<CameraShake>();
 	}
 	
 	// Update is called once per frame
@@ -50,6 +53,7 @@ public class BlowIntoPieces : MonoBehaviour {
                 Destroy(t.gameObject);
             }
         }
+        cameraShake.PlayerSpecificShake(shakeAmount, transform.position);
     }
 
     

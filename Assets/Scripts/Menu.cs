@@ -19,7 +19,7 @@ public class Menu : MonoBehaviour {
     List<RectTransform> buttonsSorted = new List<RectTransform>();
 
     float moveSelectorCooldownCounter = 0;
-    float moveSelectorCooldown = 1;
+    float moveSelectorCooldown = 0.5f;
     int selectorPosition = 0;
 
     void Start()
@@ -52,9 +52,20 @@ public class Menu : MonoBehaviour {
             selector.position = buttonsSorted[selectorPosition].position - Vector3.right * (buttonsSorted[selectorPosition].sizeDelta.x + 20);
             moveSelectorCooldownCounter = moveSelectorCooldown;
         }
+        else if (controller.LeftStickY > 0.2f && moveSelectorCooldownCounter <= 0)
+        {
+            selectorPosition = (selectorPosition + buttonsSorted.Count - 1) % buttonsSorted.Count;
+            selector.position = buttonsSorted[selectorPosition].position - Vector3.right * (buttonsSorted[selectorPosition].sizeDelta.x + 20);
+            moveSelectorCooldownCounter = moveSelectorCooldown;
+        }
         else if(controller.LeftStickY > -0.2f && controller.LeftStickY < 0.2f)
         {
             moveSelectorCooldownCounter = 0;
+        }
+
+        if(controller.Action1.WasPressed)
+        {
+            buttonsSorted[selectorPosition].GetComponentInChildren<Button>().onClick.Invoke();
         }
     }
 
@@ -173,6 +184,7 @@ public class Menu : MonoBehaviour {
 	
     void AssignRandomButton(Button button, Text buttonText, Text price)
     {
+        print("Huh?");
         int randomIndex = Random.Range(0, 9);
         switch(randomIndex)
         {
