@@ -36,6 +36,7 @@ public class MakeLevel : MonoBehaviour {
         MakeEnemys(manager.level - manager.bossDelay, boss, true);
         MakeEnemys(spawnAmount * manager.level - manager.iaDelay, enemy, false);
         MakeEnemys(spawnAmount * manager.level - manager.slasherDelay, slasher, false);
+        MakeEnemys(1, hackHack, false);
     }
 
     void GenerateLevel(int maxRooms, int maxTries, Vector3 levelSize)
@@ -156,17 +157,22 @@ public class MakeLevel : MonoBehaviour {
                 go.GetComponent<LaserBossBehavior>().patrolPos = aiPoints;
                 go.GetComponent<Health>().isBoss = isBoss;
             }
-            else if (type != slasher)
+            else if (type == enemy)
             {
                 go.GetComponent<AIBehavior>().patrolPos = aiPoints;
                 go.GetComponent<Health>().isBoss = isBoss;
             }
-            else
+            else if(type == slasher)
             {
                 go.GetComponent<AISlasherBehavior>().patrolPos = aiPoints;
                 go.GetComponent<Health>().isBoss = isBoss;
             }
-            if(isBoss)
+            else if (type == hackHack)
+            {
+                go.GetComponent<HackHackBehavior>().patrolPos = aiPoints;
+                go.GetComponent<Health>().isBoss = isBoss;
+            }
+            if (isBoss)
             {
                 bosses.Add(go);
             }

@@ -37,6 +37,8 @@ public class HackHackBehavior : MonoBehaviour
     UnitManager units;
     HackHackShoot shootScript;
 
+    bool angered = false;
+
 
     // Use this for initialization
     void Start()
@@ -163,7 +165,7 @@ public class HackHackBehavior : MonoBehaviour
 
     void FindPlayer()
     {
-        if (player != null && (SightRange() || HearRange()))
+        if (player != null && angered && (SightRange() || HearRange()))
         {
             //print("Play?");
             RaycastHit hit;
@@ -200,16 +202,22 @@ public class HackHackBehavior : MonoBehaviour
         Transform obj = col.transform;
         if (col.transform.root != null)
             obj = col.transform.root;
-        if (obj.GetComponent<BulletBehaviour>() != null && _state != State.shooting && _state != State.chase)
+        if (obj.GetComponent<BulletBehaviour>() != null)
         {
-            Rigidbody colBody = (col.transform.root != null ? col.transform.root.GetComponent<Rigidbody>() : col.transform.GetComponent<Rigidbody>());
-            if (colBody != null)
+            angered = true;
+            if (_state != State.shooting && _state != State.chase)
             {
-                _meshAgent.SetDestination(transform.position - col.relativeVelocity.normalized * 2);
+                {
+                    Rigidbody colBody = (col.transform.root != null ? col.transform.root.GetComponent<Rigidbody>() : col.transform.GetComponent<Rigidbody>());
+                    if (colBody != null)
+                    {
+                        _meshAgent.SetDestination(transform.position - col.relativeVelocity.normalized * 2);
+                    }
+                    else
+                        _meshAgent.SetDestination(transform.position + Vector3.ProjectOnPlane(col.contacts[0].point - transform.position, Vector3.up).normalized * 2);
+                    _state = State.searching;
+                }
             }
-            else
-                _meshAgent.SetDestination(transform.position + Vector3.ProjectOnPlane(col.contacts[0].point - transform.position, Vector3.up).normalized * 2);
-            _state = State.searching;
         }
     }
 

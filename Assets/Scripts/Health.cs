@@ -36,9 +36,26 @@ public class Health : MonoBehaviour {
 	void Update () {
         if (health <= 0)
         {
-            if (isBoss)
+            if (maker != null)
             {
-                if(maker.bosses.Count == 1)
+                if (isBoss)
+                {
+                    if (maker.bosses.Count == 1)
+                    {
+                        GameObject go = meshMaker.Torus(portalMat);
+                        go.name = "Portal";
+                        go.transform.position = transform.position;
+                        go.transform.rotation = Quaternion.Euler(50, 225, 0);
+                        go.AddComponent<Portal>();
+                        go.AddComponent<BoxCollider>();
+                        go.GetComponent<BoxCollider>().isTrigger = true;
+                    }
+                    else
+                    {
+                        maker.bosses.Remove(gameObject);
+                    }
+                }
+                else if (maker.bosses.Count == 0 && maker.enemys.Count == 1)
                 {
                     GameObject go = meshMaker.Torus(portalMat);
                     go.name = "Portal";
@@ -50,22 +67,8 @@ public class Health : MonoBehaviour {
                 }
                 else
                 {
-                    maker.bosses.Remove(gameObject);
+                    maker.enemys.Remove(gameObject);
                 }
-            }
-            else if(maker.bosses.Count == 0 && maker.enemys.Count == 1)
-            {
-                GameObject go = meshMaker.Torus(portalMat);
-                go.name = "Portal";
-                go.transform.position = transform.position;
-                go.transform.rotation = Quaternion.Euler(50, 225, 0);
-                go.AddComponent<Portal>();
-                go.AddComponent<BoxCollider>();
-                go.GetComponent<BoxCollider>().isTrigger = true;
-            }
-            else
-            {
-                maker.enemys.Remove(gameObject);
             }
             GetComponent<BlowIntoPieces>().BlowUp();
             DropMoney money = GetComponent<DropMoney>();

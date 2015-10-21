@@ -25,7 +25,7 @@ public class HackHackBladeScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if(hand.parent == null)
+        if(hand != null && hand.parent == null)
         {
             enabled = false;
             return;
@@ -86,8 +86,16 @@ public class HackHackBladeScript : MonoBehaviour {
 
     void OnTriggerStay (Collider col)
     {
-        Health health = col.gameObject.GetComponent<Health>();
-        if (health != null)
-            health.health -= Time.deltaTime;
+        if (state != State.waiting)
+        {
+            Transform tempTrans = col.transform.root;
+            if (tempTrans == null)
+                tempTrans = col.transform;
+            if (tempTrans == hand.root)
+                return;
+            Health health = tempTrans.GetComponent<Health>();
+            if (health != null)
+                health.health -= Time.deltaTime;
+        }
     }
 }
