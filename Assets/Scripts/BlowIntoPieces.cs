@@ -30,7 +30,9 @@ public class BlowIntoPieces : MonoBehaviour {
             List<Rigidbody> blowThisUp = new List<Rigidbody>();
             foreach (Transform t in piecesToBlowUp)
             {
-                Rigidbody tempBody = t.gameObject.AddComponent<Rigidbody>();
+                Rigidbody tempBody = t.gameObject.GetComponent<Rigidbody>();
+                if(tempBody == null)
+                    tempBody = t.gameObject.AddComponent<Rigidbody>();
                 tempBody.angularDrag = 1f;
                 tempBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
                 BoxCollider col = t.gameObject.AddComponent<BoxCollider>();
@@ -53,7 +55,8 @@ public class BlowIntoPieces : MonoBehaviour {
                 Destroy(t.gameObject);
             }
         }
-        cameraShake.PlayerSpecificShake(shakeAmount, transform.position);
+        if(cameraShake != null)
+            cameraShake.PlayerSpecificShake(shakeAmount, transform.position);
     }
 
     

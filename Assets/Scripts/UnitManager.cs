@@ -95,7 +95,7 @@ public class UnitManager : MonoBehaviour {
     public void NewSave()
     {
         maxLevels = 4;
-        spawnAmount = 10;
+        spawnAmount = 0;
         level = 1;
         levelSize = 25;
         levelProcent = 50;
