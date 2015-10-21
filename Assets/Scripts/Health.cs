@@ -11,12 +11,15 @@ public class Health : MonoBehaviour {
     public Material portalMat;
     MeshMaker meshMaker;
 
+    MakeLevel maker;
+
     public float lifeLinkScaler = 0;
 
     // Use this for initialization
     void Start () {
         RunAtStart();
         meshMaker = GetComponent<MeshMaker>();
+        maker = GameObject.Find("GameManager").GetComponent<MakeLevel>();
     }
 
     protected void RunAtStart()
@@ -35,7 +38,7 @@ public class Health : MonoBehaviour {
         {
             if (isBoss)
             {
-                if(GameObject.Find("GameManager").GetComponent<MakeLevel>().bosses.Count == 1)
+                if(maker.bosses.Count == 1)
                 {
                     GameObject go = meshMaker.Torus(portalMat);
                     go.name = "Portal";
@@ -47,8 +50,22 @@ public class Health : MonoBehaviour {
                 }
                 else
                 {
-                    GameObject.Find("GameManager").GetComponent<MakeLevel>().bosses.Remove(gameObject);
+                    maker.bosses.Remove(gameObject);
                 }
+            }
+            else if(maker.bosses.Count == 0 && maker.enemys.Count == 1)
+            {
+                GameObject go = meshMaker.Torus(portalMat);
+                go.name = "Portal";
+                go.transform.position = transform.position;
+                go.transform.rotation = Quaternion.Euler(50, 225, 0);
+                go.AddComponent<Portal>();
+                go.AddComponent<BoxCollider>();
+                go.GetComponent<BoxCollider>().isTrigger = true;
+            }
+            else
+            {
+                maker.enemys.Remove(gameObject);
             }
             GetComponent<BlowIntoPieces>().BlowUp();
             DropMoney money = GetComponent<DropMoney>();

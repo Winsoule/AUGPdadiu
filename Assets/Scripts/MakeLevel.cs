@@ -26,15 +26,16 @@ public class MakeLevel : MonoBehaviour {
     void Start () {
         manager = GameObject.Find("GameManager").GetComponent<UnitManager>();
         spawnAmount = manager.spawnAmount;
-        numRoomsProcent = manager.levelProcent;
+        numRoomsProcent = manager.levelProcent + (manager.level*manager.levelIncreaser);
         numOfSideWalls = manager.levelSize;
         levelSize = levelFloor.GetComponent<Renderer>().bounds.size;
         meshMaker = transform.GetComponent<MeshMaker>();
         
         GenerateLevel(((int)(numOfSideWalls * numOfSideWalls * (numRoomsProcent / 100f))), ((int)(numOfSideWalls * numOfSideWalls * (numRoomsProcent / 100f) * 10)), levelSize);
-        MakeEnemys(1 * transform.GetComponent<UnitManager>().level, boss, true);
-        MakeEnemys(spawnAmount / 2 * transform.GetComponent<UnitManager>().level, enemy, false);
-        MakeEnemys(spawnAmount / 2 * transform.GetComponent<UnitManager>().level, slasher, false);
+
+        MakeEnemys(manager.level - manager.bossDelay, boss, true);
+        MakeEnemys(spawnAmount * manager.level - manager.iaDelay, enemy, false);
+        MakeEnemys(spawnAmount * manager.level - manager.slasherDelay, slasher, false);
     }
 
     void GenerateLevel(int maxRooms, int maxTries, Vector3 levelSize)

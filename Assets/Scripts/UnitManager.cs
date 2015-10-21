@@ -6,10 +6,10 @@ using InControl;
 [System.Serializable]
 public class UnitManager : MonoBehaviour {
 
-    public int maxLevels = 4;
-    public int spawnAmount = 10;
-    public int level = 1;
-    public int levelSize, levelProcent;
+    public int maxLevels;
+    public int spawnAmount;
+    public int level;
+    public int levelSize, levelProcent, levelIncreaser;
     public float playerMaxHealth;
     public float playerHealth;
     public float playerDamage;
@@ -18,10 +18,11 @@ public class UnitManager : MonoBehaviour {
     public float playerLifelink;
     public float bulletSize;
     public float bulletSpeed;
-    public int money = 1;
+    public int money;
     public float moneyDroppingModifier;
     public float movementSpeed;
     public float aiDamage, slasherDamage, bossDamage;
+    public int bossDelay, slasherDelay, iaDelay;
 
 
    
@@ -54,6 +55,7 @@ public class UnitManager : MonoBehaviour {
         level = temp.level;
         levelSize = temp.levelSize;
         levelProcent = temp.levelProcent;
+        levelIncreaser = temp.levelIncreaser;
         playerMaxHealth = temp.playerMaxHealth;
         playerRegen = temp.playerRegen;
         playerHealth = temp.playerHealth;
@@ -69,6 +71,9 @@ public class UnitManager : MonoBehaviour {
         aiDamage = temp.aiDamage;
         slasherDamage = temp.slasherDamage;
         bossDamage = temp.bossDamage;
+        bossDelay = temp.bossDelay;
+        slasherDelay = temp.slasherDelay;
+        iaDelay = temp.iaDelay;
     }
 
     // Update is called once per frame
@@ -94,11 +99,12 @@ public class UnitManager : MonoBehaviour {
 
     public void NewSave()
     {
-        maxLevels = 4;
-        spawnAmount = 10;
+        maxLevels = 10;
+        spawnAmount = 4;
         level = 1;
         levelSize = 25;
-        levelProcent = 50;
+        levelProcent = 25;
+        levelIncreaser = 5;
 
         playerMaxHealth = 3;
         playerHealth = 3;
@@ -112,9 +118,12 @@ public class UnitManager : MonoBehaviour {
         bulletSpeed = 1;
         moneyDroppingModifier = 1;
 
-        aiDamage = 1;
+        aiDamage = 0.5f;
         slasherDamage = 1;
         bossDamage = 1;
+        bossDelay = 1;
+        slasherDelay = spawnAmount;
+        iaDelay = 0;
         Debug.Log("New Save");
 
         Serializer.Save<UnitManager>(this, "UnitInfo");
