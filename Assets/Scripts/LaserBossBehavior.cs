@@ -205,7 +205,13 @@ public class LaserBossBehavior : MonoBehaviour
             obj = col.transform.root;
         if (obj.GetComponent<BulletBehaviour>() != null && _state != State.shooting && _state != State.chase)
         {
-            _meshAgent.SetDestination(transform.position + Vector3.ProjectOnPlane(col.contacts[0].point - transform.position, Vector3.up).normalized);
+            Rigidbody colBody = (col.transform.root != null ? col.transform.root.GetComponent<Rigidbody>() : col.transform.GetComponent<Rigidbody>());
+            if (colBody != null)
+            {
+                _meshAgent.SetDestination(transform.position - col.relativeVelocity.normalized * 2);
+            }
+            else
+                _meshAgent.SetDestination(transform.position + Vector3.ProjectOnPlane(col.contacts[0].point - transform.position, Vector3.up).normalized * 2);
             _state = State.searching;
         }
     }

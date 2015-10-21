@@ -34,6 +34,8 @@ public class BlowIntoPieces : MonoBehaviour {
                 if(tempBody == null)
                     tempBody = t.gameObject.AddComponent<Rigidbody>();
                 tempBody.angularDrag = 1f;
+                tempBody.isKinematic = false;
+                tempBody.useGravity = true;
                 tempBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
                 BoxCollider col = t.gameObject.AddComponent<BoxCollider>();
                 col.size = Vector3.one * 0.2f;
@@ -52,7 +54,11 @@ public class BlowIntoPieces : MonoBehaviour {
         {
             foreach(Transform t in immediateDestroy)
             {
-                Destroy(t.gameObject);
+                ParticleSystem p = t.GetComponent<ParticleSystem>();
+                if (p != null)
+                    p.gameObject.AddComponent<TurnOffAndDestroyParticle>();
+                else
+                    Destroy(t.gameObject);
             }
         }
         if(cameraShake != null)

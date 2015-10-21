@@ -2,8 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(NavMeshAgent))]
-public class AISlasherBehavior : MonoBehaviour
+public class HackHackBehavior : MonoBehaviour
 {
 
     public enum State
@@ -11,6 +10,7 @@ public class AISlasherBehavior : MonoBehaviour
         idle,
         patrol,
         chase,
+        shooting,
         searching
     };
 
@@ -18,6 +18,7 @@ public class AISlasherBehavior : MonoBehaviour
     public GameObject player;
     public float lookDistance = 2;
     public float hearDistance = 1;
+    public float sightAngle = 45f;
     public float lostHimDistance = 5;
     public float waitTime = 5.0f;
     public float hitDestination = 1.0f;
@@ -31,12 +32,10 @@ public class AISlasherBehavior : MonoBehaviour
     private Vector3 _destination = Vector3.zero;
     //private Vector3 _lastSeenPlayerPos = Vector3.zero;
     private NavMeshAgent _meshAgent;
-    private AIShoot _aiShoot;
     public float _tempTime;
 
-    public Transform Blades;
-
     UnitManager units;
+    HackHackShoot shootScript;
 
 
     // Use this for initialization
@@ -44,18 +43,15 @@ public class AISlasherBehavior : MonoBehaviour
     {
         units = GameObject.Find("GameManager").GetComponent<UnitManager>();
         _meshAgent = transform.GetComponent<NavMeshAgent>();
-        _aiShoot = GetComponent<AIShoot>();
         units = GameObject.Find("GameManager").GetComponent<UnitManager>();
-        _meshAgent.updateRotation = false;
+        shootScript = GetComponent<HackHackShoot>();
+        //_meshAgent.updateRotation = false;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        Blades.Rotate(transform.up, Time.deltaTime * 200);
-        if(_state == State.chase)
-            Blades.Rotate(transform.up, Time.deltaTime * 200);
         if (units.player != null)
             player = units.player.gameObject;
         else
@@ -65,6 +61,7 @@ public class AISlasherBehavior : MonoBehaviour
         switch (_state)
         {
             case State.idle:
+                print("Idle");
                 if (_waitedTime == Mathf.Epsilon)
                 {
                     _waitedTime = 0.0f;
@@ -98,14 +95,15 @@ public class AISlasherBehavior : MonoBehaviour
                 break;
 
             case State.chase:
+                print("No?");
                 if (player == null)
                 {
                     _state = State.idle;
                     break;
                 }
-                if (Vector3.Distance(player.transform.position, transform.position) <= stoppingDistance)
+                if (Vector3.Distance(player.transform.position, transform.position) <= 2)
                 {
-
+                    
                     _meshAgent.Stop();
                 }
                 else
@@ -123,9 +121,38 @@ public class AISlasherBehavior : MonoBehaviour
                 {
                     _meshAgent.SetDestination(player.transform.position);
                 }
+                //Shoot him!!
+                if (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, 10, FindPlayerMask))
+                {
+                    if (hit.transform.root.gameObject == player)
+                    {
+                        _state = State.shooting;
+                        shootScript.Shoot(player.transform);
+                        //_meshAgent.Stop();
+                        _meshAgent.updateRotation = false;
+                    }
+                }
+                break;
+            case State.shooting:
+                if (player == null)
+                {
+                    _state = State.idle;
+                    _meshAgent.Resume();
+                    _meshAgent.updateRotation = true;
+                    break;
+                }
+                //If the player is either too far away or the robot doesn't have clear sight, it stops shooting.
+                if (Vector3.Distance(player.transform.position, transform.position) >= 10
+                    || (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, 10, FindPlayerMask) && hit.transform.root.gameObject != player))
+                {
+                    _state = State.chase;
+                    shootScript.StopShooting();
+                    _meshAgent.Resume();
+                    _meshAgent.updateRotation = true;
+                }
                 break;
             case State.searching:
-                if (Vector3.Distance(_meshAgent.destination, transform.position) <= stoppingDistance)
+                if (Vector3.Distance(_meshAgent.destination, transform.position) <= 2)
                 {
                     _state = State.idle;
                 }
@@ -152,7 +179,8 @@ public class AISlasherBehavior : MonoBehaviour
 
     public bool SightRange()
     {
-        if (Vector3.Distance(player.transform.position, transform.position) <= lookDistance)
+        if (Vector3.Distance(player.transform.position, transform.position) <= lookDistance &&
+            Vector3.Angle(player.transform.position - transform.position, transform.forward) <= sightAngle)
         {
             return true;
         }
@@ -172,7 +200,7 @@ public class AISlasherBehavior : MonoBehaviour
         Transform obj = col.transform;
         if (col.transform.root != null)
             obj = col.transform.root;
-        if (obj.GetComponent<BulletBehaviour>() != null && _state != State.chase)
+        if (obj.GetComponent<BulletBehaviour>() != null && _state != State.shooting && _state != State.chase)
         {
             Rigidbody colBody = (col.transform.root != null ? col.transform.root.GetComponent<Rigidbody>() : col.transform.GetComponent<Rigidbody>());
             if (colBody != null)
@@ -194,3 +222,4 @@ public class AISlasherBehavior : MonoBehaviour
         }
     }
 }
+
