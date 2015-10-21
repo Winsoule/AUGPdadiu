@@ -5,13 +5,11 @@ public class DropMoney : MonoBehaviour {
 
     public GameObject moneyPrefab;
     public int money;
-    [HideInInspector]
-    float moneyModifier = 1;
     UnitManager manager;
 
     public void DropSomeMoney()
     {
-        for(int i = 0; i < (int)(money*moneyModifier); i++)
+        for(int i = 0; i < (int)(money*manager.moneyDroppingModifier); i++)
         {
             GameObject moneyObj = Instantiate(moneyPrefab, transform.position, Quaternion.identity) as GameObject;
             Vector3 throwDir = Random.onUnitSphere * 5;
@@ -24,6 +22,5 @@ public class DropMoney : MonoBehaviour {
 	void Start ()
     {
         manager = Serializer.Load<UnitManager>("UnitInfo");
-        moneyModifier = manager.moneyDroppingModifier;
 	}
 }

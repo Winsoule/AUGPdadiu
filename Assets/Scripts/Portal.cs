@@ -18,7 +18,6 @@ public class Portal : MonoBehaviour {
     {
         if (col.name == "Player")
         {
-            Debug.Log(manager.level);
             if(manager.level >= manager.maxLevels)
             {
                 Application.LoadLevel("End");
