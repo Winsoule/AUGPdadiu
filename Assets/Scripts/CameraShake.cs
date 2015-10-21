@@ -30,7 +30,11 @@ public class CameraShake : MonoBehaviour {
             transform.Rotate(Vector3.up, Random.Range(0, shakeAmount));
             transform.Rotate(Vector3.right, Random.Range(0, shakeAmount));
             shakeAmount -= Time.deltaTime + shakeAmount*Time.deltaTime;
-            controller.Vibrate(shakeAmount * 10000);
+            controller.Vibrate(shakeAmount);
+        }
+        else
+        {
+            controller.Vibrate(0);
         }
 	}
 

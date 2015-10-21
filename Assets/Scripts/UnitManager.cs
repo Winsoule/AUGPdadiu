@@ -76,10 +76,12 @@ public class UnitManager : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.R) || InputManager.ActiveDevice.MenuWasPressed)
         {
+            InputManager.ActiveDevice.Vibrate(0f);
             Application.LoadLevel("MainMenu");
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            InputManager.ActiveDevice.Vibrate(0f);
             Application.Quit();
         }
     }

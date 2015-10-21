@@ -29,10 +29,8 @@ public class StartMenu : MonoBehaviour
 
     void Update()
     {
-        print(controller.LeftStickX);
         if (controller.Action1.WasPressed)
         {
-            print("lol!");
             button.GetComponentInChildren<Button>().onClick.Invoke();
         }
     }

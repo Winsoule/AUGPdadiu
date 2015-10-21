@@ -85,7 +85,7 @@ public class MakeLevel : MonoBehaviour {
         }
 
         Debug.Log("Found " + rooms + " rooms in " + tries + " tries.");
-        
+
         for (int i = 0; i < internalSizeX; i++)
         {
             for (int j = 0; j < internalSizeZ; j++)
@@ -131,7 +131,8 @@ public class MakeLevel : MonoBehaviour {
                 else if ((i == internalSizeX / 2 + 1 && j == internalSizeZ / 2 + 1) || (i == internalSizeX / 2 - 1 && j == internalSizeZ / 2)
                     || (i == internalSizeX / 2 && j == internalSizeZ / 2 - 1) || (i == internalSizeX / 2 - 1 && j == internalSizeZ / 2 - 1)
                     || (i == internalSizeX / 2 - 1 && j == internalSizeZ / 2 + 1) || (i == internalSizeX / 2 + 1 && j == internalSizeZ / 2 - 1)
-                    || (i == internalSizeX / 2 && j == internalSizeZ / 2 + 1) || (i == internalSizeX / 2 + 1 && j == internalSizeZ / 2))
+                    || (i == internalSizeX / 2 && j == internalSizeZ / 2 + 1) || (i == internalSizeX / 2 + 1 && j == internalSizeZ / 2)
+                    || (i == internalSizeX / 2 && j == internalSizeZ / 2))
                        
                 {
 
