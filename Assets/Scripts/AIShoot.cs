@@ -153,6 +153,7 @@ public class AIShoot : MonoBehaviour {
         GameObject bullet = Instantiate(bullets.bulletParent, exit.position, exit.rotation) as GameObject;
         BulletBehaviour bulletScript = bullet.GetComponent<BulletBehaviour>();
         bulletScript.SetBulletType(Bullets.BulletType.normal);
+        bulletScript.SetDamage(GameObject.Find("GameManager").GetComponent<UnitManager>().aiDamage);
         currentNozzle = (currentNozzle + 1) % Nozzles.Count;
     }
 }

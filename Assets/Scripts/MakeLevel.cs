@@ -11,24 +11,27 @@ public class MakeLevel : MonoBehaviour {
     public Transform levelFloor;
     public float wallHight;
     public int numRoomsProcent = 10;
-    public int NumOfSideWalls = 100;
-    public Material wallMat, portalMat;
+    public int numOfSideWalls = 100;
+    public Material wallMat, portalMat, black;
     public Transform cam;
     public List<Vector3> aiPoints = new List<Vector3>();
     public List<GameObject> bosses = new List<GameObject>();
     public List<GameObject> enemys = new List<GameObject>();
 
-
+    UnitManager manager;
     Vector3 levelSize;
     List<Vector3> objects = new List<Vector3>();
 
     // Use this for initialization
     void Start () {
-        spawnAmount = GameObject.Find("GameManager").GetComponent<UnitManager>().spawnAmount;
+        manager = GameObject.Find("GameManager").GetComponent<UnitManager>();
+        spawnAmount = manager.spawnAmount;
+        numRoomsProcent = manager.levelProcent;
+        numOfSideWalls = manager.levelSize;
         levelSize = levelFloor.GetComponent<Renderer>().bounds.size;
         meshMaker = transform.GetComponent<MeshMaker>();
         
-        GenerateLevel(((int)(NumOfSideWalls * NumOfSideWalls * (numRoomsProcent / 100f))), ((int)(NumOfSideWalls * NumOfSideWalls * (numRoomsProcent / 100f) * 10)), levelSize);
+        GenerateLevel(((int)(numOfSideWalls * numOfSideWalls * (numRoomsProcent / 100f))), ((int)(numOfSideWalls * numOfSideWalls * (numRoomsProcent / 100f) * 10)), levelSize);
         MakeEnemys(1 * transform.GetComponent<UnitManager>().level, boss, true);
         MakeEnemys(spawnAmount / 2 * transform.GetComponent<UnitManager>().level, enemy, false);
         MakeEnemys(spawnAmount / 2 * transform.GetComponent<UnitManager>().level, slasher, false);
@@ -36,7 +39,7 @@ public class MakeLevel : MonoBehaviour {
 
     void GenerateLevel(int maxRooms, int maxTries, Vector3 levelSize)
     {
-        Vector3 wallSize = new Vector3(levelSize.x / NumOfSideWalls, wallHight, levelSize.z / NumOfSideWalls);
+        Vector3 wallSize = new Vector3(levelSize.x / numOfSideWalls, wallHight, levelSize.z / numOfSideWalls);
         int internalSizeX = (int)(levelSize.x/ wallSize.x);
         int internalSizeZ = (int)(levelSize.z/ wallSize.z);
         GameObject level = new GameObject();
@@ -102,6 +105,14 @@ public class MakeLevel : MonoBehaviour {
                             go.AddComponent<NavMeshObstacle>();
                             go.GetComponent<NavMeshObstacle>().carving = true;
                             go.AddComponent<BoxCollider>();
+                            go.GetComponent<BoxCollider>().size = new Vector3(go.GetComponent<BoxCollider>().size.x, go.GetComponent<BoxCollider>().size.y + 10f, go.GetComponent<BoxCollider>().size.z);
+                        }
+                        else
+                        {
+                            GameObject go = meshMaker.Box(wallMat);
+                            go.transform.position = new Vector3((-(internalSizeX / 2f) + i) * wallSize.x + wallSize.x / 2, wallSize.y / 2f, (-(internalSizeZ / 2f) + j) * wallSize.z + wallSize.z / 2f);
+                            go.transform.localScale = wallSize;
+                            go.transform.SetParent(level.transform);
                         }
                     }
                     else
@@ -114,17 +125,20 @@ public class MakeLevel : MonoBehaviour {
                         go.AddComponent<NavMeshObstacle>();
                         go.GetComponent<NavMeshObstacle>().carving = true;
                         go.AddComponent<BoxCollider>();
+                        go.GetComponent<BoxCollider>().size = new Vector3(go.GetComponent<BoxCollider>().size.x, go.GetComponent<BoxCollider>().size.y + 10f, go.GetComponent<BoxCollider>().size.z);
                     }
                 }
-                else if ((i == internalSizeX / 2 +1 && j == internalSizeZ / 2 +1) || (i == internalSizeX / 2 -1 && j == internalSizeZ / 2) 
-                    || (i == internalSizeX / 2 && j == internalSizeZ / 2 - 1) || (i == internalSizeX / 2 -1 && j == internalSizeZ / 2 -1) 
-                    || (i == internalSizeX / 2 && j == internalSizeZ / 2))
+                else if ((i == internalSizeX / 2 + 1 && j == internalSizeZ / 2 + 1) || (i == internalSizeX / 2 - 1 && j == internalSizeZ / 2)
+                    || (i == internalSizeX / 2 && j == internalSizeZ / 2 - 1) || (i == internalSizeX / 2 - 1 && j == internalSizeZ / 2 - 1)
+                    || (i == internalSizeX / 2 - 1 && j == internalSizeZ / 2 + 1) || (i == internalSizeX / 2 + 1 && j == internalSizeZ / 2 - 1)
+                    || (i == internalSizeX / 2 && j == internalSizeZ / 2 + 1) || (i == internalSizeX / 2 + 1 && j == internalSizeZ / 2))
+                       
                 {
 
                 }
                 else
                 {
-                    aiPoints.Add(new Vector3((-(NumOfSideWalls / 2f) + i) * wallSize.x + wallSize.x / 2, wallSize.y / 2, (-(NumOfSideWalls / 2f) + j) * wallSize.z + wallSize.z / 2));
+                    aiPoints.Add(new Vector3((-(numOfSideWalls / 2f) + i) * wallSize.x + wallSize.x / 2, wallSize.y / 2, (-(numOfSideWalls / 2f) + j) * wallSize.z + wallSize.z / 2));
                 }
             }
         }
