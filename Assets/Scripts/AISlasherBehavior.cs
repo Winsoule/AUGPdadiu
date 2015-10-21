@@ -184,7 +184,7 @@ public class AISlasherBehavior : MonoBehaviour
         Health enemyHealth = col.gameObject.GetComponent<Health>();
         if (enemyHealth != null)
         {
-            enemyHealth.health -= Time.deltaTime;
+            enemyHealth.health -= Time.deltaTime * GameObject.Find("GameManager").GetComponent<UnitManager>().slasherDamage;
         }
     }
 }
