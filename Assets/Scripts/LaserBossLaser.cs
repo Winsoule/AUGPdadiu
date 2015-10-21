@@ -120,10 +120,13 @@ public class LaserBossLaser : MonoBehaviour
                         laser.localScale = new Vector3(1, 1, 10);
                         laserHit.enableEmission = false;
                     }
-                    Vector3 cameraShakeVector = Vector3.Project(target.position - laser.position, laser.forward);
-                    cameraShakeVector = cameraShakeVector.normalized * Mathf.Clamp(cameraShakeVector.magnitude, 0, laser.localScale.z * 2);
-                    float shakeDistance = 10;
-                    cameraShake.Shake( Mathf.Max(shakeDistance - Vector3.Distance(target.position, laser.position + cameraShakeVector), 0) / shakeDistance * 0.5f);
+                    if (cameraShake != null)
+                    {
+                        Vector3 cameraShakeVector = Vector3.Project(target.position - laser.position, laser.forward);
+                        cameraShakeVector = cameraShakeVector.normalized * Mathf.Clamp(cameraShakeVector.magnitude, 0, laser.localScale.z * 2);
+                        float shakeDistance = 10;
+                        cameraShake.Shake(Mathf.Max(shakeDistance - Vector3.Distance(target.position, laser.position + cameraShakeVector), 0) / shakeDistance * 0.5f);
+                    }
                 }
                 break;
             case State.retracting:

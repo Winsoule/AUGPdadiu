@@ -46,8 +46,10 @@ public class Menu : MonoBehaviour {
         moveSelectorCooldownCounter = Mathf.Clamp(moveSelectorCooldownCounter - Time.deltaTime, 0, moveSelectorCooldown);
         //manager.money = money;
         moneyText.text = string.Format("Money: {0}", manager.money);
+        print("Update!");
         if(controller.LeftStickY < -0.2f && moveSelectorCooldownCounter <= 0)
         {
+            print("lol!");
             selectorPosition = (selectorPosition + 1) % buttonsSorted.Count;
             selector.position = buttonsSorted[selectorPosition].position - Vector3.right * (buttonsSorted[selectorPosition].sizeDelta.x + 20);
             moveSelectorCooldownCounter = moveSelectorCooldown;
@@ -184,7 +186,6 @@ public class Menu : MonoBehaviour {
 	
     void AssignRandomButton(Button button, Text buttonText, Text price)
     {
-        print("Huh?");
         int randomIndex = Random.Range(0, 9);
         switch(randomIndex)
         {
