@@ -7,7 +7,7 @@ public class MakeLevel : MonoBehaviour {
 
     public int spawnAmount;
     MeshMaker meshMaker;
-    public GameObject enemy,boss, slasher;
+    public GameObject enemy,boss, slasher, hackHack;
     public Transform levelFloor;
     public float wallHight;
     public int numRoomsProcent = 10;

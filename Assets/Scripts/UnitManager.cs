@@ -10,6 +10,7 @@ public class UnitManager : MonoBehaviour {
     public int spawnAmount;
     public int level;
     public int levelSize, levelProcent, levelIncreaser;
+    public int shopMod;
     public float playerMaxHealth;
     public float playerHealth;
     public float playerDamage;
@@ -56,6 +57,7 @@ public class UnitManager : MonoBehaviour {
         levelSize = temp.levelSize;
         levelProcent = temp.levelProcent;
         levelIncreaser = temp.levelIncreaser;
+        shopMod = temp.shopMod;
         playerMaxHealth = temp.playerMaxHealth;
         playerRegen = temp.playerRegen;
         playerHealth = temp.playerHealth;
@@ -99,12 +101,13 @@ public class UnitManager : MonoBehaviour {
 
     public void NewSave()
     {
-        maxLevels = 10;
+        maxLevels = 8;
         spawnAmount = 4;
         level = 1;
         levelSize = 25;
         levelProcent = 25;
         levelIncreaser = 5;
+        shopMod = 9;
 
         playerMaxHealth = 3;
         playerHealth = 3;
