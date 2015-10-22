@@ -176,7 +176,7 @@ public class MakeLevel : MonoBehaviour {
             {
                 bosses.Add(go);
             }
-            else
+            else if (type != hackHack)
             {
                 enemys.Add(go);
             }
