@@ -80,7 +80,6 @@ public class PlayerShoot : MonoBehaviour {
         bulletScript.IgnoreCollision(collider);
         StartCoroutine(Recoil(currentGun));
         currentGun = (currentGun + 1) % nozzles.Count;
-        
     }
 
     IEnumerator Recoil(int gunID)
