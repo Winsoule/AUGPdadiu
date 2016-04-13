@@ -10,7 +10,7 @@ public class Movement : MonoBehaviour
     public Transform eyes;
     public Transform cameraTransform;
     public Transform gunhandler;
-    public float movementSpeed = 4;
+    public float movementSpeed = 8;
 
     [HideInInspector]
     public InputDevice controller;

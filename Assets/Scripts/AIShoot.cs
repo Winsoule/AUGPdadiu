@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Assertions;
 
 [RequireComponent(typeof(AIBehavior))]
 public class AIShoot : MonoBehaviour {
@@ -26,6 +27,7 @@ public class AIShoot : MonoBehaviour {
     public float gunCoolDown = 1;
     float gunCooldownCounter = 0;
     bool canShoot = true;
+    public Collider AiCollider;
 
 
     // Use this for initialization
@@ -43,7 +45,7 @@ public class AIShoot : MonoBehaviour {
         //target = behavior.player.transform;
         GunOrgLocalPos = Gun.localPosition;
         ArmOrgLocalPos = Arm.localPosition;
-	}
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -151,9 +153,12 @@ public class AIShoot : MonoBehaviour {
         canShoot = false;
         gunCooldownCounter = gunCoolDown;
         GameObject bullet = Instantiate(bullets.bulletParent, exit.position, exit.rotation) as GameObject;
+        bullet.transform.forward = Vector3.ProjectOnPlane(exit.forward, Vector3.up);
         BulletBehaviour bulletScript = bullet.GetComponent<BulletBehaviour>();
         bulletScript.SetBulletType(Bullets.BulletType.normal);
         bulletScript.SetDamage(GameObject.Find("GameManager").GetComponent<UnitManager>().aiDamage);
+        bulletScript.IgnoreCollision(AiCollider);
+        bulletScript.SetBulletSpeedScalar(0.5f);
         currentNozzle = (currentNozzle + 1) % Nozzles.Count;
     }
 }

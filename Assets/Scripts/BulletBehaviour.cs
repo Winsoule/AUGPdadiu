@@ -69,6 +69,13 @@ public class BulletBehaviour : MonoBehaviour {
         }
     }
 
+    public void IgnoreCollision(Collider otherCol)
+    {
+        Collider col = GetComponentInChildren<Collider>();
+        if(col != null)
+            Physics.IgnoreCollision(col, otherCol);
+    }
+
 	// Use this for initialization
 	void Awake ()
     {

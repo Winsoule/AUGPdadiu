@@ -102,7 +102,7 @@ public class UnitManager : MonoBehaviour {
     public void NewSave()
     {
         maxLevels = 8;
-        spawnAmount = 4;
+        spawnAmount = 40;
         level = 1;
         levelSize = 25;
         levelProcent = 25;
@@ -112,16 +112,16 @@ public class UnitManager : MonoBehaviour {
         playerMaxHealth = 3;
         playerHealth = 3;
         playerDamage = 1;
-        playerAttackSpeed = 3;
+        playerAttackSpeed = 10;
         playerRegen = 0;
         money = 0;
-        movementSpeed = 3.5f;
+        movementSpeed = 10f;
         playerLifelink = 0;
         bulletSize = 1;
         bulletSpeed = 1;
         moneyDroppingModifier = 1;
 
-        aiDamage = 0.5f;
+        aiDamage = 2f;
         slasherDamage = 1;
         bossDamage = 1;
         bossDelay = 1;
